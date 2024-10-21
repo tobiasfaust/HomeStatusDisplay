@@ -17,11 +17,11 @@ const constexpr HSDConfig::ColorTranslator HSDConfig::colorTranslator[8];
 
 HSDConfig::HSDConfig()
 :
+m_cfgColorMapping(MAX_COLOR_MAP_ENTRIES),
+m_cfgDeviceMapping(MAX_DEVICE_MAP_ENTRIES),
 m_mainConfigFile(String("/config.json")),
 m_colorMappingConfigFile(String("/colormapping.json")),
-m_deviceMappingConfigFile(String("/devicemapping.json")),
-m_cfgDeviceMapping(MAX_DEVICE_MAP_ENTRIES),
-m_cfgColorMapping(MAX_COLOR_MAP_ENTRIES)
+m_deviceMappingConfigFile(String("/devicemapping.json"))
 {  
   // reset non-configurable members
   setVersion("");
@@ -421,7 +421,7 @@ bool HSDConfig::addDeviceMappingEntry(int entryNum, String name, deviceType type
 
 bool HSDConfig::deleteDeviceMappingEntry(int entryNum)
 {
-  bool removed = m_cfgDeviceMapping.remove(entryNum);
+  bool removed = m_cfgDeviceMapping.remove(entryNum); 
   
   if(removed)
   {

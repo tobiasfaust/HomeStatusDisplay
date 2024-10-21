@@ -6,8 +6,8 @@ m_server(80),
 m_config(config),
 m_leds(leds),
 m_mqtt(mqtt),
-m_html(),
-m_deviceUptimeMinutes(0)
+m_deviceUptimeMinutes(0),
+m_html()
 {
   m_updateServer.setup(&m_server);
 }
@@ -255,7 +255,7 @@ void HSDWebserver::deliverColorMappingPage()
 
   html += m_html.getColorMappingTableHeader();
 
-  for(uint32_t i = 0; i < m_config.getNumberOfColorMappingEntries(); i++)
+  for(uint16_t i = 0; i < m_config.getNumberOfColorMappingEntries(); i++)
   {
     const HSDConfig::ColorMapping* mapping = m_config.getColorMapping(i);
     html += m_html.getColorMappingTableEntry(i, mapping);
@@ -393,7 +393,7 @@ void HSDWebserver::deliverDeviceMappingPage()
 
   html += m_html.getDeviceMappingTableHeader();
   
-  for(uint32_t i = 0; i < m_config.getNumberOfDeviceMappingEntries(); i++)
+  for(uint16_t i = 0; i < m_config.getNumberOfDeviceMappingEntries(); i++)
   {
     const HSDConfig::DeviceMapping* mapping = m_config.getDeviceMapping(i);
     html += m_html.getDeviceMappingTableEntry(i, mapping);

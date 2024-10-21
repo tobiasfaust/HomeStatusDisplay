@@ -239,7 +239,7 @@ ListNode<T>* PreAllocatedLinkedList<T>::getLast() const
 
   if(m_size > 0)
   {
-     for(uint32_t i = 0; i < m_size - 1; i++)
+     for(uint16_t i = 0; i < m_size - 1; i++)
      {
         tmp = tmp->next;
      }

@@ -76,7 +76,7 @@ unsigned long HomeStatusDisplay::calcUptime()
 
 void HomeStatusDisplay::mqttCallback(char* topic, byte* payload, unsigned int length)
 {
-  int i = 0;
+  unsigned int i = 0;
 
   for(i = 0; (i < length) && (i < MQTT_MSG_MAX_LEN); i++) 
   {
