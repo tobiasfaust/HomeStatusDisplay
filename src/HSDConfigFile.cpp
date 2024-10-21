@@ -18,9 +18,9 @@ bool HSDConfigFile::read(char* buffer, int bufSize)
   Serial.print(F("Reading config file ")); 
   Serial.println(m_fileName); 
 
-  if(SPIFFS.exists(m_fileName)) 
+  if(LittleFS.exists(m_fileName)) 
   {
-    File configFile = SPIFFS.open(m_fileName, "r");
+    File configFile = LittleFS.open(m_fileName, "r");
 
     if(configFile)
     {
@@ -59,7 +59,7 @@ bool HSDConfigFile::write(JsonObject* data)
   Serial.print(F("Writing config file ")); 
   Serial.println(m_fileName); 
 
-  File configFile = SPIFFS.open(m_fileName, "w+");
+  File configFile = LittleFS.open(m_fileName, "w+");
 
   if(configFile)
   {  
