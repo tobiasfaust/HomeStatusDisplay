@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HSDConfig.hpp"
+#include "HSDConfig.h"
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 

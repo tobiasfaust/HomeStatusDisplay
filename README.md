@@ -1,4 +1,6 @@
 # HomeStatusDisplay
+## original code forked from https://github.com/MTJoker/HomeStatusDisplay
+
 
 Show status information sent via MQTT (e.g. from FHEM or any other MQTT-speaking system) using RGB LEDs.
 ![alt tag](http://www.bernd-schubart.de/downloads/fhem/fhemstatusdisplay/homestatusdisplay_37.jpg)

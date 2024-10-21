@@ -1,7 +1,7 @@
 #pragma once
 
-#include "HSDConfigFile.hpp"
-#include "PreAllocatedLinkedList.hpp"
+#include "HSDConfigFile.h"
+#include "PreAllocatedLinkedList.h"
 
 #define JSON_KEY_HOST                  (F("host"))
 #define JSON_KEY_WIFI_SSID             (F("wifiSSID"))

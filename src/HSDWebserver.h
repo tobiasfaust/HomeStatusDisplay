@@ -2,10 +2,10 @@
 
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
-#include "HSDConfig.hpp"
-#include "HSDLeds.hpp"
-#include "HSDMqtt.hpp"
-#include "HSDHtmlHelper.hpp"
+#include "HSDConfig.h"
+#include "HSDLeds.h"
+#include "HSDMqtt.h"
+#include "HSDHtmlHelper.h"
 
 class HSDWebserver
 {

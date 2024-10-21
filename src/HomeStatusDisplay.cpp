@@ -1,4 +1,4 @@
-#include "HomeStatusDisplay.hpp"
+#include "HomeStatusDisplay.h"
 
 // function declarations
 void handleMqttMessage(String topic, String msg);

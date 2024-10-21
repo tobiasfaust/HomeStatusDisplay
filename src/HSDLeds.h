@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HSDConfig.hpp"
+#include "HSDConfig.h"
 #include <Adafruit_NeoPixel.h>
 
 class HSDLeds

@@ -1,4 +1,4 @@
-#include "HSDHtmlHelper.hpp"
+#include "HSDHtmlHelper.h"
 
 #define SELECTED_STRING (F("selected='selected'"))
 #define CHECKED_STRING  (F("checked='checked'")) 

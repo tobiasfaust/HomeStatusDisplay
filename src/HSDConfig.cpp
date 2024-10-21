@@ -1,4 +1,4 @@
-#include "HSDConfig.hpp"
+#include "HSDConfig.h"
 #include <FS.h>
 #include <ArduinoJson.h>
 
@@ -208,6 +208,7 @@ bool HSDConfig::readColorMappingConfigFile()
   }
 
   m_cfgColorMappingDirty = false;
+  return success;
 }
 
 bool HSDConfig::readDeviceMappingConfigFile()
@@ -262,6 +263,7 @@ bool HSDConfig::readDeviceMappingConfigFile()
   }
 
   m_cfgDeviceMappingDirty = false;
+  return success;
 }
 
 void HSDConfig::writeMainConfigFile()

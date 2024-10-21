@@ -1,4 +1,4 @@
-#include "HSDLeds.hpp"
+#include "HSDLeds.h"
 
 #define NUMBER_OF_ELEMENTS(array)  (sizeof(array)/sizeof(array[0]))
 
