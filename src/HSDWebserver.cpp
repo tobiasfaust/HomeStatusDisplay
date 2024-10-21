@@ -6,10 +6,10 @@ m_server(80),
 m_config(config),
 m_leds(leds),
 m_mqtt(mqtt),
-m_html(),
-m_deviceUptimeMinutes(0)
+m_deviceUptimeMinutes(0),
+m_html()
 {
-  m_updateServer.setup(&m_server);
+  //m_updateServer.setup(&m_server);
 }
 
 void HSDWebserver::begin()
@@ -19,22 +19,25 @@ void HSDWebserver::begin()
 
   m_server.begin();
 
-  m_server.on("/", std::bind(&HSDWebserver::deliverStatusPage, this));
-  m_server.on("/cfgmain", std::bind(&HSDWebserver::deliverRootPage, this));
-  m_server.on("/cfgcolormapping", std::bind(&HSDWebserver::deliverColorMappingPage, this));
-  m_server.on("/cfgdevicemapping", std::bind(&HSDWebserver::deliverDeviceMappingPage, this));
-  m_server.onNotFound(std::bind(&HSDWebserver::deliverNotFoundPage, this));
+  m_server.on("/", std::bind(&HSDWebserver::deliverStatusPage, this, std::placeholders::_1));
+  m_server.on("/cfgmain", std::bind(&HSDWebserver::deliverRootPage, this, std::placeholders::_1));
+  m_server.on("/cfgcolormapping", std::bind(&HSDWebserver::deliverColorMappingPage, this, std::placeholders::_1));
+  m_server.on("/cfgdevicemapping", std::bind(&HSDWebserver::deliverDeviceMappingPage, this, std::placeholders::_1));
+  m_server.onNotFound(std::bind(&HSDWebserver::deliverNotFoundPage, this, std::placeholders::_1));
 }
 
 void HSDWebserver::handleClient(unsigned long deviceUptime)
 {
   m_deviceUptimeMinutes = deviceUptime;
-  m_server.handleClient();
 }
 
-void HSDWebserver::deliverRootPage()
-{
-  bool needSave = updateMainConfig();
+void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
+  AsyncResponseStream *response = request->beginResponseStream("text/html");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "-1");
+
+  bool needSave = updateMainConfig(request);
   
   String html;
   html.reserve(3000);
@@ -124,7 +127,7 @@ void HSDWebserver::deliverRootPage()
   Serial.print(F("Page size: "));
   Serial.println(html.length());
   
-  m_server.send(200, F("text/html"), html);
+  response->print(html);
 
   if(needSave)
   {
@@ -132,13 +135,17 @@ void HSDWebserver::deliverRootPage()
     m_config.saveMain();
   }
 
-  checkReboot();
+  checkReboot(request);
 
   Serial.print(F("Free RAM: ")); Serial.println(ESP.getFreeHeap());
 }
 
-void HSDWebserver::deliverStatusPage()
-{
+void HSDWebserver::deliverStatusPage(AsyncWebServerRequest *request) {
+  AsyncResponseStream *response = request->beginResponseStream("text/html");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "-1");
+
   String html;
   html.reserve(3000);
   
@@ -215,34 +222,38 @@ void HSDWebserver::deliverStatusPage()
   Serial.print(F("Page size: "));
   Serial.println(html.length());
   
-  m_server.send(200, F("text/html"), html);
+  response->print(html);
 
-  checkReboot();
+  checkReboot(request);
 }
 
-void HSDWebserver::deliverColorMappingPage()
-{
-  if(needUndo())
+void HSDWebserver::deliverColorMappingPage(AsyncWebServerRequest *request) {
+  AsyncResponseStream *response = request->beginResponseStream("text/html");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "-1");
+
+  if(needUndo(request))
   {
     Serial.println(F("Need to undo changes to color mapping config"));
     m_config.updateColorMapping();
   }
-  else if(needAdd())
+  else if(needAdd(request))
   {
     Serial.println(F("Need to add color mapping config entry"));
-    addColorMappingEntry();
+    addColorMappingEntry(request);
   }
-  else if(needDelete())
+  else if(needDelete(request))
   {
     Serial.println(F("Need to delete color mapping config entry"));
-    deleteColorMappingEntry();
+    deleteColorMappingEntry(request);
   }
-  else if(needDeleteAll())
+  else if(needDeleteAll(request))
   {
     Serial.println(F("Need to delete all color mapping config entries"));
     m_config.deleteAllColorMappingEntries();
   }
-  else if(needSave())
+  else if(needSave(request))
   {
     Serial.println(F("Need to save color mapping config"));
     m_config.saveColorMapping();
@@ -255,7 +266,7 @@ void HSDWebserver::deliverColorMappingPage()
 
   html += m_html.getColorMappingTableHeader();
 
-  for(uint32_t i = 0; i < m_config.getNumberOfColorMappingEntries(); i++)
+  for(uint16_t i = 0; i < m_config.getNumberOfColorMappingEntries(); i++)
   {
     const HSDConfig::ColorMapping* mapping = m_config.getColorMapping(i);
     html += m_html.getColorMappingTableEntry(i, mapping);
@@ -288,51 +299,51 @@ void HSDWebserver::deliverColorMappingPage()
   Serial.print(F("Page size: "));
   Serial.println(html.length());
   
-  m_server.send(200, F("text/html"), html);
+  response->print(html);
 
-  checkReboot();
+  checkReboot(request);
 
   Serial.print(F("Free RAM: ")); Serial.println(ESP.getFreeHeap());
 }
 
-bool HSDWebserver::needAdd()
+bool HSDWebserver::needAdd(AsyncWebServerRequest *request)
 {
-   return (m_server.hasArg("add"));
+   return (request->hasArg("add"));
 }
 
-bool HSDWebserver::needDelete()
+bool HSDWebserver::needDelete(AsyncWebServerRequest *request)
 {
-   return (m_server.hasArg("delete"));
+   return (request->hasArg("delete"));
 }
 
-bool HSDWebserver::needDeleteAll()
+bool HSDWebserver::needDeleteAll(AsyncWebServerRequest *request)
 {
-  return (m_server.hasArg("deleteall"));
+  return (request->hasArg("deleteall"));
 }
 
-bool HSDWebserver::needSave()
+bool HSDWebserver::needSave(AsyncWebServerRequest *request)
 {
-   return (m_server.hasArg("save"));
+   return (request->hasArg("save"));
 }
 
-bool HSDWebserver::needUndo()
+bool HSDWebserver::needUndo(AsyncWebServerRequest *request)
 {
-   return (m_server.hasArg("undo"));
+   return (request->hasArg("undo"));
 }
 
-bool HSDWebserver::addColorMappingEntry()
+bool HSDWebserver::addColorMappingEntry(AsyncWebServerRequest *request)
 {
   bool success = false;
   
-  if(m_server.hasArg("i") && m_server.hasArg("n") && m_server.hasArg("t") && m_server.hasArg("c") && m_server.hasArg("b"))
+  if(request->hasArg("i") && request->hasArg("n") && request->hasArg("t") && request->hasArg("c") && request->hasArg("b"))
   {
-    if(m_server.arg("n") != "")
+    if(request->arg("n") != "")
     {
-      success = m_config.addColorMappingEntry(m_server.arg("i").toInt(),
-                                              m_server.arg("n"), 
-                                              (HSDConfig::deviceType)(m_server.arg("t").toInt()), 
-                                              (HSDConfig::Color)(HSDConfig::id2color(m_server.arg("c").toInt())), 
-                                              (HSDConfig::Behavior)(m_server.arg("b").toInt()));
+      success = m_config.addColorMappingEntry(request->arg("i").toInt(),
+                                              request->arg("n"), 
+                                              (HSDConfig::deviceType)(request->arg("t").toInt()), 
+                                              (HSDConfig::Color)(HSDConfig::id2color(request->arg("c").toInt())), 
+                                              (HSDConfig::Behavior)(request->arg("b").toInt()));
     }
     else
     {
@@ -343,14 +354,14 @@ bool HSDWebserver::addColorMappingEntry()
   return success;
 }
 
-bool HSDWebserver::deleteColorMappingEntry()
+bool HSDWebserver::deleteColorMappingEntry(AsyncWebServerRequest *request)
 {
   bool success = false;
   int entryNum = 0;
   
-  if(m_server.hasArg("i"))
+  if(request->hasArg("i"))
   {
-    entryNum = m_server.arg("i").toInt();
+    entryNum = request->arg("i").toInt();
 // TODO check conversion status
     success = m_config.deleteColorMappingEntry(entryNum);                                  
   }
@@ -358,29 +369,33 @@ bool HSDWebserver::deleteColorMappingEntry()
   return success;
 }
 
-void HSDWebserver::deliverDeviceMappingPage()
-{
-  if(needUndo())
+void HSDWebserver::deliverDeviceMappingPage(AsyncWebServerRequest *request) {
+  AsyncResponseStream *response = request->beginResponseStream("text/html");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "-1");
+
+  if(needUndo(request))
   {
     Serial.println(F("Need to undo changes to device mapping config"));
     m_config.updateDeviceMapping();
   }
-  else if(needAdd())
+  else if(needAdd(request))
   {
     Serial.println(F("Need to add device mapping config entry"));
-    addDeviceMappingEntry();
+    addDeviceMappingEntry(request);
   }
-  else if(needDelete())
+  else if(needDelete(request))
   {
     Serial.println(F("Need to delete device mapping config entry"));
-    deleteDeviceMappingEntry();
+    deleteDeviceMappingEntry(request);
   }
-  else if(needDeleteAll())
+  else if(needDeleteAll(request))
   {
     Serial.println(F("Need to delete all device mapping config entries"));
     m_config.deleteAllDeviceMappingEntries();
   }
-  else if(needSave())
+  else if(needSave(request))
   {
     Serial.println(F("Need to save device mapping config"));
     m_config.saveDeviceMapping();
@@ -393,7 +408,7 @@ void HSDWebserver::deliverDeviceMappingPage()
 
   html += m_html.getDeviceMappingTableHeader();
   
-  for(uint32_t i = 0; i < m_config.getNumberOfDeviceMappingEntries(); i++)
+  for(uint16_t i = 0; i < m_config.getNumberOfDeviceMappingEntries(); i++)
   {
     const HSDConfig::DeviceMapping* mapping = m_config.getDeviceMapping(i);
     html += m_html.getDeviceMappingTableEntry(i, mapping);
@@ -426,25 +441,24 @@ void HSDWebserver::deliverDeviceMappingPage()
   Serial.print(F("Page size: "));
   Serial.println(html.length());
   
-  m_server.send(200, F("text/html"), html);
+  response->print(html);
   
-  checkReboot();
+  checkReboot(request);
 
   Serial.print(F("Free RAM: ")); Serial.println(ESP.getFreeHeap());
 }
 
-bool HSDWebserver::addDeviceMappingEntry()
-{
+bool HSDWebserver::addDeviceMappingEntry(AsyncWebServerRequest *request) {
   bool success = false;
 
-  if(m_server.hasArg("i") && m_server.hasArg("n") && m_server.hasArg("t") && m_server.hasArg("l"))
+  if(request->hasArg("i") && request->hasArg("n") && request->hasArg("t") && request->hasArg("l"))
   {
-    if(m_server.arg("n") != "")
+    if(request->arg("n") != "")
     {
-      success = m_config.addDeviceMappingEntry(m_server.arg("i").toInt(),
-                                               m_server.arg("n"), 
-                                               (HSDConfig::deviceType)(m_server.arg("t").toInt()), 
-                                               m_server.arg("l").toInt());                                   
+      success = m_config.addDeviceMappingEntry(request->arg("i").toInt(),
+                                               request->arg("n"), 
+                                               (HSDConfig::deviceType)(request->arg("t").toInt()), 
+                                               request->arg("l").toInt());                                   
     }
     else
     {
@@ -455,14 +469,14 @@ bool HSDWebserver::addDeviceMappingEntry()
   return success;
 }
 
-bool HSDWebserver::deleteDeviceMappingEntry()
+bool HSDWebserver::deleteDeviceMappingEntry(AsyncWebServerRequest *request)
 {
   bool success = false;
   int entryNum = 0;
   
-  if(m_server.hasArg("i"))
+  if(request->hasArg("i"))
   {
-    entryNum = m_server.arg("i").toInt();
+    entryNum = request->arg("i").toInt();
 // TODO check conversion status
     success = m_config.deleteDeviceMappingEntry(entryNum);                                    
   }
@@ -470,76 +484,80 @@ bool HSDWebserver::deleteDeviceMappingEntry()
   return success;
 }
 
-void HSDWebserver::deliverNotFoundPage()
-{
+void HSDWebserver::deliverNotFoundPage(AsyncWebServerRequest *request) {
+  AsyncResponseStream *response = request->beginResponseStream("text/html");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "-1");
+
   String html = F("File Not Found\n\n");
   html += F("URI: ");
-  html += m_server.uri();
+  html += request->url();
   html += F("\nMethod: ");
-  html += (m_server.method() == HTTP_GET) ? F("GET") : F("POST");
+  html += (request->method() == HTTP_GET) ? F("GET") : F("POST");
   html += F("\nArguments: ");
-  html += m_server.args();
+  html += request->args();
   html += F("\n");
   
-  for (uint8_t i = 0; i < m_server.args(); i++)
+  for (uint8_t i = 0; i < request->args(); i++)
   {
-    html += " " + m_server.argName(i) + ": " + m_server.arg(i) + "\n";
+    html += " " + request->argName(i) + ": " + request->arg(i) + "\n";
   }
   
-  m_server.send(404, F("text/plain"), html);
+  response->print(html);
 }
 
-void HSDWebserver::checkReboot()
+void HSDWebserver::checkReboot(AsyncWebServerRequest *request)
 {
-  if(m_server.hasArg(F("reset"))) 
+  if(request->hasArg(F("reset"))) 
   {
     Serial.println(F("Rebooting ESP."));
     ESP.restart();
   }
 }
 
-bool HSDWebserver::updateMainConfig()
+bool HSDWebserver::updateMainConfig(AsyncWebServerRequest *request)
 {
   bool needSave = false;
 
-  if (m_server.hasArg(JSON_KEY_HOST))
+  if (request->hasArg(JSON_KEY_HOST))
   {
-    needSave |= m_config.setHost(m_server.arg(JSON_KEY_HOST).c_str());
+    needSave |= m_config.setHost(request->arg(JSON_KEY_HOST).c_str());
   }
   
-  if (m_server.hasArg(JSON_KEY_WIFI_SSID))
+  if (request->hasArg(JSON_KEY_WIFI_SSID))
   {
-    needSave |= m_config.setWifiSSID(m_server.arg(JSON_KEY_WIFI_SSID).c_str());
+    needSave |= m_config.setWifiSSID(request->arg(JSON_KEY_WIFI_SSID).c_str());
   }
   
-  if (m_server.hasArg(JSON_KEY_WIFI_PSK)) 
+  if (request->hasArg(JSON_KEY_WIFI_PSK)) 
   {
-    needSave |= m_config.setWifiPSK(m_server.arg(JSON_KEY_WIFI_PSK).c_str());
+    needSave |= m_config.setWifiPSK(request->arg(JSON_KEY_WIFI_PSK).c_str());
   }
 
-  if (m_server.hasArg(JSON_KEY_MQTT_SERVER))
+  if (request->hasArg(JSON_KEY_MQTT_SERVER))
   {
-    needSave |= m_config.setMqttServer(m_server.arg(JSON_KEY_MQTT_SERVER).c_str());
+    needSave |= m_config.setMqttServer(request->arg(JSON_KEY_MQTT_SERVER).c_str());
   }
   
-  if (m_server.hasArg(JSON_KEY_MQTT_STATUS_TOPIC))
+  if (request->hasArg(JSON_KEY_MQTT_STATUS_TOPIC))
   {
-    needSave |= m_config.setMqttStatusTopic(m_server.arg(JSON_KEY_MQTT_STATUS_TOPIC).c_str());
+    needSave |= m_config.setMqttStatusTopic(request->arg(JSON_KEY_MQTT_STATUS_TOPIC).c_str());
   }
   
-  if (m_server.hasArg(JSON_KEY_MQTT_TEST_TOPIC)) 
+  if (request->hasArg(JSON_KEY_MQTT_TEST_TOPIC)) 
   {
-    needSave |= m_config.setMqttTestTopic(m_server.arg(JSON_KEY_MQTT_TEST_TOPIC).c_str());
+    needSave |= m_config.setMqttTestTopic(request->arg(JSON_KEY_MQTT_TEST_TOPIC).c_str());
   }
 
-  if (m_server.hasArg(JSON_KEY_MQTT_WILL_TOPIC)) 
+  if (request->hasArg(JSON_KEY_MQTT_WILL_TOPIC)) 
   {
-    needSave |= m_config.setMqttWillTopic(m_server.arg(JSON_KEY_MQTT_WILL_TOPIC).c_str());
+    needSave |= m_config.setMqttWillTopic(request->arg(JSON_KEY_MQTT_WILL_TOPIC).c_str());
   }
 
-  if (m_server.hasArg(JSON_KEY_LED_COUNT))
+  if (request->hasArg(JSON_KEY_LED_COUNT))
   {
-    int ledCount = m_server.arg(JSON_KEY_LED_COUNT).toInt();
+    int ledCount = request->arg(JSON_KEY_LED_COUNT).toInt();
     
     if(ledCount > 0)
     {
@@ -547,9 +565,9 @@ bool HSDWebserver::updateMainConfig()
     }
   }
   
-  if (m_server.hasArg(JSON_KEY_LED_PIN)) 
+  if (request->hasArg(JSON_KEY_LED_PIN)) 
   {
-    int ledPin = m_server.arg(JSON_KEY_LED_PIN).toInt();
+    int ledPin = request->arg(JSON_KEY_LED_PIN).toInt();
     
     if(ledPin > 0)
     {
@@ -557,9 +575,9 @@ bool HSDWebserver::updateMainConfig()
     }
   }
 
-  if (m_server.hasArg(JSON_KEY_LED_BRIGHTNESS)) 
+  if (request->hasArg(JSON_KEY_LED_BRIGHTNESS)) 
   {
-    uint8_t ledBrightness = m_server.arg(JSON_KEY_LED_BRIGHTNESS).toInt();
+    uint8_t ledBrightness = request->arg(JSON_KEY_LED_BRIGHTNESS).toInt();
     
     if(ledBrightness > 0)
     {

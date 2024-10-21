@@ -2,13 +2,13 @@
 
 HSDMqtt::HSDMqtt(const HSDConfig& config, MQTT_CALLBACK_SIGNATURE)
 :
-m_config(config),
 m_pubSubClient(m_wifiClient),
+m_config(config),
+m_numberOfInTopics(0),
 m_maxConnectRetries(3),
 m_numConnectRetriesDone(0),
 m_retryDelay(5000),
-m_millisLastConnectTry(0),
-m_numberOfInTopics(0)
+m_millisLastConnectTry(0)
 {
   m_pubSubClient.setCallback(callback);
 }

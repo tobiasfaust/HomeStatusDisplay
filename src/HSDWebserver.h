@@ -1,7 +1,8 @@
 #pragma once
 
-#include <ESP8266WebServer.h>
-#include <ESP8266HTTPUpdateServer.h>
+#include <ESPAsyncWebServer.h>
+#include <DNSServer.h>
+//#include <ESP8266HTTPUpdateServer.h>
 #include "HSDConfig.h"
 #include "HSDLeds.h"
 #include "HSDMqtt.h"
@@ -19,32 +20,33 @@ public:
 
 private:
 
-  void deliverRootPage();
-  void deliverStatusPage();
-  void deliverColorMappingPage();
-  void deliverDeviceMappingPage();
-  void deliverNotFoundPage();
+  void deliverRootPage(AsyncWebServerRequest *request);
+  void deliverStatusPage(AsyncWebServerRequest *request);
+  void deliverColorMappingPage(AsyncWebServerRequest *request);
+  void deliverDeviceMappingPage(AsyncWebServerRequest *request);
+  void deliverNotFoundPage(AsyncWebServerRequest *request);
 
-  void checkReboot();
+  void checkReboot(AsyncWebServerRequest *request);
 
-  bool updateMainConfig();
+  bool updateMainConfig(AsyncWebServerRequest *request);
 
-  bool needAdd();
-  bool needDelete();
-  bool needDeleteAll();
-  bool needSave();
-  bool needUndo();
+  bool needAdd(AsyncWebServerRequest *request);
+  bool needDelete(AsyncWebServerRequest *request);
+  bool needDeleteAll(AsyncWebServerRequest *request);
+  bool needSave(AsyncWebServerRequest *request);
+  bool needUndo(AsyncWebServerRequest *request);
     
-  bool addColorMappingEntry();
-  bool deleteColorMappingEntry();
+  bool addColorMappingEntry(AsyncWebServerRequest *request);
+  bool deleteColorMappingEntry(AsyncWebServerRequest *request);
 
-  bool addDeviceMappingEntry();
-  bool deleteDeviceMappingEntry();
+  bool addDeviceMappingEntry(AsyncWebServerRequest *request);
+  bool deleteDeviceMappingEntry(AsyncWebServerRequest *request);
   
-  bool updateDeviceMappingConfig();
+  bool updateDeviceMappingConfig(AsyncWebServerRequest *request);
 
-  ESP8266WebServer m_server;
-  ESP8266HTTPUpdateServer m_updateServer;
+  AsyncWebServer m_server;
+  DNSServer* dns;
+  //ESP8266HTTPUpdateServer m_updateServer;
   HSDConfig& m_config;
   const HSDLeds& m_leds;
   const HSDMqtt& m_mqtt;

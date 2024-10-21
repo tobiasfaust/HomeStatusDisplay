@@ -14,8 +14,8 @@ int getFreeRamSize();
 
 HomeStatusDisplay::HomeStatusDisplay()
 :
-m_webServer(m_config, m_leds, m_mqttHandler),
 m_wifi(m_config),
+m_webServer(m_config, m_leds, m_mqttHandler),
 m_mqttHandler(m_config, std::bind(&HomeStatusDisplay::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
 m_leds(m_config),
 m_lastWifiConnectionState(false),
@@ -76,7 +76,7 @@ unsigned long HomeStatusDisplay::calcUptime()
 
 void HomeStatusDisplay::mqttCallback(char* topic, byte* payload, unsigned int length)
 {
-  int i = 0;
+  unsigned int i = 0;
 
   for(i = 0; (i < length) && (i < MQTT_MSG_MAX_LEN); i++) 
   {
