@@ -4,8 +4,7 @@
 #define CHECKED_STRING  (F("checked='checked'")) 
 #define EMPTY_STRING    (F(""))
 
-HSDHtmlHelper::HSDHtmlHelper()
-{
+HSDHtmlHelper::HSDHtmlHelper() {
   
 }
 

@@ -2,7 +2,8 @@
 
 #include <Arduino.h>
 #include "HSDConfig.h"
-#include <ESP8266WebServer.h>
+
+#include <ESPAsyncWebServer.h>
 
 class HSDHtmlHelper
 {

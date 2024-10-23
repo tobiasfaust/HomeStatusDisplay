@@ -1,5 +1,13 @@
 #pragma once
 
+#ifdef ESP8266
+  #include <ESP8266WiFi.h>
+  #include <ESPAsyncTCP.h>
+#elif ESP32
+  #include <WiFi.h> 
+  #include <AsyncTCP.h>
+#endif
+
 #include "HSDConfig.h"
 
 class HSDWifi
@@ -9,7 +17,7 @@ public:
   HSDWifi(const HSDConfig& config);
 
   void begin();
-  void handleConnection();
+  void handleConnection(bool firstRun);
   bool connected();
 
 private:

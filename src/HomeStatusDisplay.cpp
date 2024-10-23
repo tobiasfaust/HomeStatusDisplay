@@ -14,8 +14,8 @@ int getFreeRamSize();
 
 HomeStatusDisplay::HomeStatusDisplay()
 :
-m_webServer(m_config, m_leds, m_mqttHandler),
 m_wifi(m_config),
+m_webServer(m_config, m_leds, m_mqttHandler),
 m_mqttHandler(m_config, std::bind(&HomeStatusDisplay::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
 m_leds(m_config),
 m_lastWifiConnectionState(false),
@@ -32,9 +32,9 @@ void HomeStatusDisplay::begin(const char* version, const char* identifier)
   Serial.println(F(""));
 
   m_config.begin(version, identifier);
+  m_wifi.begin();
   m_webServer.begin();
   m_leds.begin();
-  m_wifi.begin();
   m_mqttHandler.begin(); 
 
   Serial.print(F("Free RAM: ")); Serial.println(ESP.getFreeHeap());
@@ -46,7 +46,7 @@ void HomeStatusDisplay::work()
     
   checkConnections();
 
-  m_wifi.handleConnection();
+  m_wifi.handleConnection(false);
   m_webServer.handleClient(uptime);
 
   if(m_wifi.connected())
