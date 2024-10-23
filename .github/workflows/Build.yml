@@ -1,0 +1,60 @@
+name: Build&Deploy
+on:
+  push:
+    branches:
+      - master
+      - prelive
+      - development
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.yml'
+
+jobs:
+    
+  build:
+    name: BuildAndDeploy-${{ matrix.variant }}
+    runs-on: ubuntu-latest
+    env:
+      REPOSITORY: ${{ github.event.repository.name }}
+
+    strategy:
+      matrix:
+        variant:
+          - firmware_ESP32
+          - firmware_ESP32-S
+          - firmware_ESP32-S2
+          - firmware_ESP32-S3
+          - firmware_ESP32-C3
+          - firmware_ESP8266
+            
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: actions/setup-python@main
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install -U platformio
+          pip install --upgrade pip
+
+      - name: Run PlatformIO
+        run: |
+          platformio run -e ${{ matrix.variant }}
+          platformio run --target buildfs -e ${{ matrix.variant }}
+
+      - name: Display generated files
+        run: |
+          ls -R .pio/build/${{ matrix.variant }}/
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@main
+        with:
+          name: "${{ matrix.variant }}.zip"
+          path: .pio/build/${{ matrix.variant }}/*.bin
+  
+      
