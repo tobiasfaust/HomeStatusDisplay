@@ -41,7 +41,7 @@ void HSDConfig::begin(const char* version, const char* defaultIdentifier)
   setVersion(version);
   setHost(defaultIdentifier);
   
-  if(LittleFS.begin(true))
+  if(startLittleFS)
   {
     Serial.println(F("Mounted file system."));
 

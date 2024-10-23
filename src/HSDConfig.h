@@ -3,6 +3,12 @@
 #include "HSDConfigFile.h"
 #include "PreAllocatedLinkedList.h"
 
+#ifdef ESP32
+  #define startLittleFS LittleFS.begin(true)
+#else
+  #define startLittleFS LittleFS.begin()
+#endif
+
 #define JSON_KEY_HOST                  (F("host"))
 #define JSON_KEY_WIFI_SSID             (F("wifiSSID"))
 #define JSON_KEY_WIFI_PSK              (F("wifiPSK"))
