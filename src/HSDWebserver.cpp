@@ -128,6 +128,7 @@ void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
   Serial.println(html.length());
   
   response->print(html);
+  request->send(response);
 
   if(needSave)
   {
@@ -223,6 +224,7 @@ void HSDWebserver::deliverStatusPage(AsyncWebServerRequest *request) {
   Serial.println(html.length());
   
   response->print(html);
+  request->send(response);
 
   checkReboot(request);
 }
@@ -300,6 +302,7 @@ void HSDWebserver::deliverColorMappingPage(AsyncWebServerRequest *request) {
   Serial.println(html.length());
   
   response->print(html);
+  request->send(response);
 
   checkReboot(request);
 
@@ -442,6 +445,7 @@ void HSDWebserver::deliverDeviceMappingPage(AsyncWebServerRequest *request) {
   Serial.println(html.length());
   
   response->print(html);
+  request->send(response);
   
   checkReboot(request);
 
@@ -505,6 +509,7 @@ void HSDWebserver::deliverNotFoundPage(AsyncWebServerRequest *request) {
   }
   
   response->print(html);
+  request->send(response);
 }
 
 void HSDWebserver::checkReboot(AsyncWebServerRequest *request)
