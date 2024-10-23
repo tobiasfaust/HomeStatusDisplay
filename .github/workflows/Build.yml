@@ -45,8 +45,7 @@ jobs:
       - name: Run PlatformIO
         run: |
           platformio run -e ${{ matrix.variant }}
-          platformio run --target buildfs -e ${{ matrix.variant }}
-
+          
       - name: Display generated files
         run: |
           ls -R .pio/build/${{ matrix.variant }}/
