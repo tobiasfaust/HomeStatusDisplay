@@ -263,8 +263,13 @@ private:
   static const int MAX_MQTT_TEST_TOPIC_LEN   = 50;
   static const int MAX_MQTT_WILL_TOPIC_LEN   = 50;
 
-  static const int MAX_COLOR_MAP_ENTRIES     = 30;
-  static const int MAX_DEVICE_MAP_ENTRIES    = 35;
+  #ifdef ESP32
+    static const int MAX_COLOR_MAP_ENTRIES     = 50;
+    static const int MAX_DEVICE_MAP_ENTRIES    = 100;
+  #else
+    static const int MAX_COLOR_MAP_ENTRIES     = 30;
+    static const int MAX_DEVICE_MAP_ENTRIES    = 35;
+  #endif
 
   PreAllocatedLinkedList<ColorMapping> m_cfgColorMapping;
   bool m_cfgColorMappingDirty;
