@@ -33,6 +33,11 @@ public:
 	int size() const;
  
   /*
+	 * Get maximum of possible elements in the list
+	 */
+  int maxSize() const;
+
+  /*
 	 * Remove element at specified index. Returns
    * false if element does not exist.
 	 */
@@ -108,6 +113,12 @@ template<typename T>
 int PreAllocatedLinkedList<T>::size() const
 {
   return m_size;
+}
+
+template<typename T>
+int PreAllocatedLinkedList<T>::maxSize() const
+{
+  return m_maxCount;
 }
 
 template<typename T>

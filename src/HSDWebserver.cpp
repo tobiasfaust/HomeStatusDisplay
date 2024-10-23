@@ -152,6 +152,10 @@ void HSDWebserver::deliverStatusPage(AsyncWebServerRequest *request) {
   
   html = m_html.getHeader("Status", m_config.getHost(), m_config.getVersion());
 
+  html += F("ESP Free RAM: ");
+  html += ESP_GetFreeHeap();
+  html += F(" Bytes</p>");
+
   html += F("<p>Device uptime: ");
   html += m_html.minutes2Uptime(m_deviceUptimeMinutes);
   html += F("</p>");
@@ -421,12 +425,17 @@ void HSDWebserver::deliverDeviceMappingPage(AsyncWebServerRequest *request) {
 
   if(m_config.isDeviceMappingFull())
   {
-    html += F("</table><p>Edit entry (add not possible, entry limit reached):</p>");
+    html += F("</table><p>Edit entry (add not possible, entry limit of ");
+    html += m_config.getDeviceMaxSize();
+    html += F(" reached):</p>");
     html += m_html.getDeviceMappingTableAddEntryForm(m_config.getNumberOfDeviceMappingEntries(), true);
   }
   else
   {
-    html += F("</table><p>Add/edit entry:</p>");    
+    html += F("</table><p>Add/edit entry (max ");   
+    html += m_config.getDeviceMaxSize();
+    html += F(" items):</p>"); 
+
     html += m_html.getDeviceMappingTableAddEntryForm(m_config.getNumberOfDeviceMappingEntries(), false);
   }
 
