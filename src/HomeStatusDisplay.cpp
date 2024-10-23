@@ -32,9 +32,9 @@ void HomeStatusDisplay::begin(const char* version, const char* identifier)
   Serial.println(F(""));
 
   m_config.begin(version, identifier);
+  m_wifi.begin();
   m_webServer.begin();
   m_leds.begin();
-  m_wifi.begin();
   m_mqttHandler.begin(); 
 
   Serial.print(F("Free RAM: ")); Serial.println(ESP.getFreeHeap());
@@ -46,7 +46,7 @@ void HomeStatusDisplay::work()
     
   checkConnections();
 
-  m_wifi.handleConnection();
+  m_wifi.handleConnection(false);
   m_webServer.handleClient(uptime);
 
   if(m_wifi.connected())

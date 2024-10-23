@@ -17,7 +17,7 @@ public:
   HSDWifi(const HSDConfig& config);
 
   void begin();
-  void handleConnection();
+  void handleConnection(bool firstRun);
   bool connected();
 
 private:
