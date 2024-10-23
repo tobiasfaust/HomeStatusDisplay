@@ -17,18 +17,25 @@ void HSDWebserver::begin()
   Serial.println(F(""));
   Serial.println(F("Starting WebServer."));
 
-  m_server.begin();
-
   m_server.on("/", std::bind(&HSDWebserver::deliverStatusPage, this, std::placeholders::_1));
   m_server.on("/cfgmain", std::bind(&HSDWebserver::deliverRootPage, this, std::placeholders::_1));
   m_server.on("/cfgcolormapping", std::bind(&HSDWebserver::deliverColorMappingPage, this, std::placeholders::_1));
   m_server.on("/cfgdevicemapping", std::bind(&HSDWebserver::deliverDeviceMappingPage, this, std::placeholders::_1));
   m_server.onNotFound(std::bind(&HSDWebserver::deliverNotFoundPage, this, std::placeholders::_1));
+
+  ElegantOTA.begin(&m_server);    // Start ElegantOTA
+  // ElegantOTA callbacks
+  //ElegantOTA.onStart(onOTAStart);
+  //ElegantOTA.onProgress(onOTAProgress);
+  //ElegantOTA.onEnd(onOTAEnd);
+
+  m_server.begin();
 }
 
 void HSDWebserver::handleClient(unsigned long deviceUptime)
 {
   m_deviceUptimeMinutes = deviceUptime;
+  ElegantOTA.loop();
 }
 
 void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {

@@ -1,12 +1,13 @@
 #pragma once
 
 #include <ESPAsyncWebServer.h>
-#include <DNSServer.h>
+//#include <DNSServer.h>
 //#include <ESP8266HTTPUpdateServer.h>
 #include "HSDConfig.h"
 #include "HSDLeds.h"
 #include "HSDMqtt.h"
 #include "HSDHtmlHelper.h"
+#include <ElegantOTA.h>
 
 #ifdef ESP8266
   #define ESP_getChipId() ESP.getChipId() 
@@ -53,8 +54,7 @@ private:
   bool updateDeviceMappingConfig(AsyncWebServerRequest *request);
 
   AsyncWebServer m_server;
-  DNSServer* dns;
-  //ESP8266HTTPUpdateServer m_updateServer;
+  
   HSDConfig& m_config;
   const HSDLeds& m_leds;
   const HSDMqtt& m_mqtt;
