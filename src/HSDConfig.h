@@ -250,14 +250,14 @@ private:
   static const int MAX_VERSION_LEN           = 20;
   static const int MAX_HOST_LEN              = 30;
   static const int MAX_WIFI_SSID_LEN         = 30;
-  static const int MAX_WIFI_PSK_LEN          = 30;
+  static const int MAX_WIFI_PSK_LEN          = 64;
   static const int MAX_MQTT_SERVER_LEN       = 20;
   static const int MAX_MQTT_STATUS_TOPIC_LEN = 50;
   static const int MAX_MQTT_TEST_TOPIC_LEN   = 50;
   static const int MAX_MQTT_WILL_TOPIC_LEN   = 50;
 
-  static const int MAX_COLOR_MAP_ENTRIES  = 30;
-  static const int MAX_DEVICE_MAP_ENTRIES = 35;
+  static const int MAX_COLOR_MAP_ENTRIES     = 30;
+  static const int MAX_DEVICE_MAP_ENTRIES    = 35;
 
   PreAllocatedLinkedList<ColorMapping> m_cfgColorMapping;
   bool m_cfgColorMappingDirty;

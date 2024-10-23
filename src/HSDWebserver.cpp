@@ -73,7 +73,7 @@ void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
   html += F("</tr><tr><td>Password</td>");
   html += F("  <td><input type='password' id='wifiPSK' name='wifiPSK' value='");
   html += String(m_config.getWifiPSK());
-  html += F("' size='30' maxlength='40' placeholder='Password'></td></tr>");
+  html += F("' size='30' maxlength='64' placeholder='Password'></td></tr>");
 
   html += F(
   " <tr>"
