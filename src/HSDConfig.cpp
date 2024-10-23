@@ -448,6 +448,11 @@ bool HSDConfig::isDeviceMappingFull() const
   return m_cfgDeviceMapping.isFull();
 }
 
+int HSDConfig::getDeviceMaxSize() const
+{
+  return m_cfgDeviceMapping.maxSize();
+}
+
 bool HSDConfig::addColorMappingEntry(int entryNum, String msg, deviceType type, Color color, Behavior behavior)
 {
   bool success = false;

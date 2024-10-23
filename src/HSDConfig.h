@@ -188,6 +188,7 @@ public:
   bool deleteAllDeviceMappingEntries();
   bool isDeviceMappingDirty() const;
   bool isDeviceMappingFull() const;
+  int  getDeviceMaxSize() const;
   
   bool addColorMappingEntry(int entryNum, String msg, deviceType type, Color color, Behavior behavior);
   bool deleteDeviceMappingEntry(int entryNum);
