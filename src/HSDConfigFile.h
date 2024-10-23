@@ -12,7 +12,7 @@ public:
   HSDConfigFile(String fileName);
   virtual ~HSDConfigFile();
 
-  bool read(char* buffer, int bufSize);
+  bool read(char* buffer, size_t bufSize);
   bool write(JsonObject* data);
   
 private:

@@ -34,9 +34,8 @@ void HSDWifi::handleConnection(bool firstRun) {
 
   if(isConnected != m_lastConnectStatus) {
     if(isConnected) {
-      Serial.print(F("WiFi connected with IP "));
+      Serial.print(F("WiFi connected with IP: "));
       Serial.print(WiFi.localIP());
-      Serial.println(F("."));
       
       m_numConnectRetriesDone = 0;
     } else {
@@ -57,7 +56,7 @@ void HSDWifi::handleConnection(bool firstRun) {
     } else {
       unsigned long currentMillis = millis();
       
-      if ( firstRun || (currentMillis - m_millisLastConnectTry) >= m_retryDelay) {
+      if ( firstRun || (int)(currentMillis - m_millisLastConnectTry) >= m_retryDelay) {
         m_millisLastConnectTry = currentMillis; 
         Serial.println(F("Try to connect..."));
 
@@ -74,7 +73,7 @@ void HSDWifi::handleConnection(bool firstRun) {
       
           m_numConnectRetriesDone++;
         } else if (m_numConnectRetriesDone < m_maxConnectRetries) {
-          Serial.printf("Waiting %d/%dsec\n", m_numConnectRetriesDone*m_retryDelay, m_maxConnectRetries*m_retryDelay);
+          Serial.printf("Waiting %d/%dsec\n", m_numConnectRetriesDone*m_retryDelay/1000, m_maxConnectRetries*m_retryDelay/1000);
           m_numConnectRetriesDone++;
         } else {
           Serial.println(F("Failed to connect WiFi."));

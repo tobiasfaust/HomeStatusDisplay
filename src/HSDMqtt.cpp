@@ -53,7 +53,7 @@ void HSDMqtt::handle()
   {
     unsigned long currentMillis = millis();
 
-    if( (currentMillis - m_millisLastConnectTry) >= m_retryDelay)
+    if( (int)(currentMillis - m_millisLastConnectTry) >= m_retryDelay)
     {
       m_millisLastConnectTry = currentMillis; 
 

@@ -94,10 +94,10 @@ public:
       strncpy(name, n.c_str(), MAX_DEVICE_MAPPING_NAME_LEN);
       name[MAX_DEVICE_MAPPING_NAME_LEN] = '\0';
       type = t;
-      ledNumber = l;   
+      ledNumber = l;
     }
     
-    char name[MAX_DEVICE_MAPPING_NAME_LEN]; // name of the device
+    char name[MAX_DEVICE_MAPPING_NAME_LEN + 1]; // name of the device
     deviceType type;                        // type of the device
     int ledNumber;                          // led number on which reactions for this device are displayed
   };

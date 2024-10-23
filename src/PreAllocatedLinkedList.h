@@ -24,7 +24,7 @@ public:
    * Create list with maxCount elements. List node memory as well
    * as data memory are maintained inside the list.
    */
-	PreAllocatedLinkedList(uint32_t maxCount);
+	PreAllocatedLinkedList(uint16_t maxCount);
 	~PreAllocatedLinkedList();
 
 	/*
@@ -67,22 +67,22 @@ public:
   
 private:
 
-  int m_size;
+  uint16_t m_size;
   ListNode<T>* m_root;
-  uint32_t m_maxCount;
+  uint16_t m_maxCount;
 
   ListNode<T>* getLast() const;
   ListNode<T>* getNode(int index) const;
 };
 
 template<typename T>
-PreAllocatedLinkedList<T>::PreAllocatedLinkedList(uint32_t maxCount)
+PreAllocatedLinkedList<T>::PreAllocatedLinkedList(uint16_t maxCount)
 :
 m_size(0),
 m_root(NULL),
 m_maxCount(maxCount)
 {
-  for(uint32_t i = 0; i < m_maxCount; i++)
+  for(uint16_t i = 0; i < m_maxCount; i++)
   {
     ListNode<T> *tmp = new ListNode<T>();
     tmp->data = new T;
