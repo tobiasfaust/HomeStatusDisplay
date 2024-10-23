@@ -7,9 +7,9 @@ HSDWifi::HSDWifi(const HSDConfig& config)
 :
 m_config(config),
 m_connectFailure(false),
-m_maxConnectRetries(10),
+m_maxConnectRetries(120),
 m_numConnectRetriesDone(0),
-m_retryDelay(500),
+m_retryDelay(1000),
 m_millisLastConnectTry(0),
 m_accessPointActive(false),
 m_lastConnectStatus(false)
@@ -47,8 +47,12 @@ void HSDWifi::handleConnection(bool firstRun) {
   }
   
   if(!isConnected && !m_accessPointActive) {
+
     if(m_connectFailure) {
-      Serial.println(F("Connection failures detected, start Accesspoint"));
+      Serial.printf("Connection failure detected after %d tries and %d minutes, start Accesspoint\n", 
+        m_numConnectRetriesDone,
+        m_numConnectRetriesDone*m_retryDelay);
+
       this->startAccessPoint();
     } else {
       unsigned long currentMillis = millis();
