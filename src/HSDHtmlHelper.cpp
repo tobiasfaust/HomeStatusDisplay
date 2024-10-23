@@ -18,8 +18,8 @@ String HSDHtmlHelper::getHeader(const char* title, const char* host, const char*
   header += F("<title>");
   header += String(host);
   header += F("</title>");
-  header += F("<style>.button {border-radius:0;height:30px;width:100px;border:0;background-color:black;color:#fff;margin:5px;cursor:pointer;}</style>");
-  header += F("<style>.buttonr {border-radius:0;height:30px;width:100px;border:0;background-color:red;color:#fff;margin:5px;cursor:pointer;}</style>");
+  header += F("<style>.button {border-radius:0;height:30px;width:110px;border:0;background-color:black;color:#fff;margin:5px;cursor:pointer;}</style>");
+  header += F("<style>.buttonr {border-radius:0;height:30px;width:110px;border:0;background-color:red;color:#fff;margin:5px;cursor:pointer;}</style>");
   header += F("<style>.hsdcolor {width:15px;height:15px;border:1px black solid;float:left;margin-right:5px';}</style>");
   header += F("<style>.rdark {background-color:#f9f9f9;}</style>");
   header += F("<style>.rlight {background-color:#e5e5e5;}</style>");
@@ -31,12 +31,12 @@ String HSDHtmlHelper::getHeader(const char* title, const char* host, const char*
   header += String(version);
   header += F("</font>");
   header += F("<form><p><input type='button' class='button' onclick=\"location.href='./'\"  value='Status'>");
-  header += F("<input type='submit' class='button'value='Reboot' id='reset' name='reset'>");
-  header += F("<input type='button' class='button'onclick=\"location.href='./update'\"  value='Update Firmware'></p>");
+  header += F("<input type='submit' class='button' value='Reboot' id='reset' name='reset'>");
+  header += F("<input type='button' class='button' onclick=\"location.href='./update'\"  value='Update Firmware'></p>");
   
-  header += F("<p><input type='button' class='button'onclick=\"location.href='./cfgmain'\"  value='General'>");
-  header += F("<input type='button' class='button'onclick=\"location.href='./cfgcolormapping'\"  value='Color mapping'>");
-  header += F("<input type='button' class='button'onclick=\"location.href='./cfgdevicemapping'\"  value='Device mapping'></p></form>");
+  header += F("<p><input type='button' class='button' onclick=\"location.href='./cfgmain'\"  value='General'>");
+  header += F("<input type='button' class='button' onclick=\"location.href='./cfgcolormapping'\"  value='Color mapping'>");
+  header += F("<input type='button' class='button' onclick=\"location.href='./cfgdevicemapping'\"  value='Device mapping'></p></form>");
   
   header += F("<h4>"); 
   header += title;
