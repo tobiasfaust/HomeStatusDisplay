@@ -41,7 +41,7 @@ void HSDWifi::handleConnection(bool firstRun) {
   if(isConnected != m_lastConnectStatus) {
     if(isConnected) {
       Serial.print(F("WiFi connected with IP: "));
-      Serial.print(WiFi.localIP());
+      Serial.println(WiFi.localIP());
       
       m_numConnectRetriesDone = 0;
     } else {
