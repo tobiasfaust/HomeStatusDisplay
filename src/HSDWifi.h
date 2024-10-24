@@ -24,13 +24,14 @@ private:
 
   void startAccessPoint();
 
-  const HSDConfig& m_config;
-  bool m_connectFailure;
-  int m_maxConnectRetries;
-  int m_numConnectRetriesDone;
-  int m_retryDelay;
-  unsigned long m_millisLastConnectTry;
-  bool m_accessPointActive;
-  bool m_lastConnectStatus;
+  const     HSDConfig& m_config;
+  bool      m_connectFailure;
+  uint16_t  m_maxConnectRetries;
+  uint16_t  m_numConnectRetriesDone;
+  uint16_t  m_retryDelay;
+  uint32_t  m_millisLastConnectTry;
+  bool      m_accessPointActive;
+  uint32_t  m_accessPointStartTime;
+  bool      m_lastConnectStatus;
 };
 

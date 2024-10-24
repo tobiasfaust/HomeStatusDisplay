@@ -6,3 +6,4 @@ Release 0.7:
   - change max configurable LED mapping entries for ESP32 to 100
   - change max configurable Color mapping entries for ESP32 to 50
   - use ElegantOta to achive ESP32 compatibilty
+  - add ESP-Reboot after 5min running Accesspoint

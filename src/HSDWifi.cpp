@@ -12,6 +12,7 @@ m_numConnectRetriesDone(0),
 m_retryDelay(1000),
 m_millisLastConnectTry(0),
 m_accessPointActive(false),
+m_accessPointStartTime(0),
 m_lastConnectStatus(false)
 { 
   
@@ -31,6 +32,11 @@ void HSDWifi::begin() {
 
 void HSDWifi::handleConnection(bool firstRun) {
   bool isConnected = connected();
+
+  if (this->m_accessPointActive && (uint)(millis() - m_accessPointStartTime) > (5*60*1000)) {
+    Serial.println(F("Inactivive Accesspoint since 5min, Rebooting ESP."));
+    ESP.restart();
+  }
 
   if(isConnected != m_lastConnectStatus) {
     if(isConnected) {
@@ -100,7 +106,8 @@ void HSDWifi::startAccessPoint() {
     Serial.print(F("AccessPoint SSID is ")); Serial.println(SOFT_AP_SSID); 
     Serial.print(F("IP: ")); Serial.println(ip);
 
-    m_accessPointActive = true;
+    this->m_accessPointActive = true;
+    this->m_accessPointStartTime = millis();
   } else {
     Serial.println(F("Error starting access point."));
   }
