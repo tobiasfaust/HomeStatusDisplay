@@ -494,6 +494,11 @@ bool HSDConfig::deleteAllColorMappingEntries()
   return true;
 }
 
+int HSDConfig::getColorMappingMaxSize() const
+{
+  return m_cfgColorMapping.maxSize();
+}
+
 bool HSDConfig::isColorMappingDirty() const
 {
   return m_cfgColorMappingDirty;

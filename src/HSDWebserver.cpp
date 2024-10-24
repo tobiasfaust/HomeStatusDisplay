@@ -294,7 +294,10 @@ void HSDWebserver::deliverColorMappingPage(AsyncWebServerRequest *request) {
   }
   else
   {
-    html += F("</table><p>Add/edit entry:</p>");    
+    html += F("</table><p>Add/edit entry (max ");   
+    html += m_config.getColorMappingMaxSize();
+    html += F(" items):</p>"); 
+
     html += m_html.getColorMappingTableAddEntryForm(m_config.getNumberOfColorMappingEntries(), false);
   }
 
