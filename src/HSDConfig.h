@@ -195,6 +195,7 @@ public:
   bool deleteAllColorMappingEntries();
   bool isColorMappingDirty() const;
   bool isColorMappingFull() const;
+  int  getColorMappingMaxSize() const;
   
   const DeviceMapping* getDeviceMapping(int index) const;
   const ColorMapping* getColorMapping(int index); 
