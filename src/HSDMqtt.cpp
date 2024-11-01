@@ -5,9 +5,10 @@ HSDMqtt::HSDMqtt(const HSDConfig& config, MQTT_CALLBACK_SIGNATURE)
 m_pubSubClient(m_wifiClient),
 m_config(config),
 m_numberOfInTopics(0),
-m_maxConnectRetries(3),
+m_connectFailure(false),
+m_maxConnectRetries(60),
 m_numConnectRetriesDone(0),
-m_retryDelay(5000),
+m_retryDelay(10000),
 m_millisLastConnectTry(0)
 {
   m_pubSubClient.setCallback(callback);
@@ -45,38 +46,30 @@ void HSDMqtt::initTopics()
 
 void HSDMqtt::handle()
 {
-  if(connected())
-  {
+  if(connected()) {
     m_pubSubClient.loop();
-  }
-  else if(!m_connectFailure) 
-  {
+  
+  } else if(!m_connectFailure) {
     unsigned long currentMillis = millis();
 
-    if( (int)(currentMillis - m_millisLastConnectTry) >= m_retryDelay)
-    {
+    if( (int)(currentMillis - m_millisLastConnectTry) >= m_retryDelay) {
       m_millisLastConnectTry = currentMillis; 
 
-      if(m_numConnectRetriesDone < m_maxConnectRetries)
-      {
-        if(reconnect())
-        {
+      if(m_numConnectRetriesDone < m_maxConnectRetries) {
+        if(reconnect()) {
           Serial.println("DEBUG: Reconnect successful");
           m_numConnectRetriesDone = 0;
-        }
-        else
-        {
+        } else {
           m_numConnectRetriesDone++;
           Serial.println("DEBUG: Reconnect unsuccessful, m_numConnectRetriesDone = " + String(m_numConnectRetriesDone));
         }
-      }
-      else
-      {
-        Serial.println(F("Failed to connect Mqtt."));      
+      } else {
+        Serial.println(F("Failed to connect Mqtt. Give it up, Restart ESP"));      
         m_connectFailure = true;
+        ESP.restart();
       } 
     }
-  }
+  } 
 }
 
 bool HSDMqtt::connected() const
