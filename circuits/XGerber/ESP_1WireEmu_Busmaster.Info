@@ -1,0 +1,31 @@
+CAM-Ausgabe für aktuelles Projekt ESP_1WireEmu_Busmaster.T3001
+Ausgabe am 14. Mai 2021, 11:39h
+Aktuelles Projekt erzeugt mit TARGET 30.3.0.82 discover
+Ausgabe erzeugt mit TARGET 3001! V30.3.0.82
+Aktuelles Projekt von TARGET NC-Edition: Kommerzielle Nutzung ist strafbar!
+LIEFERANSCHRIFT:
+  
+  
+  
+  D- 
+  Tel: 
+  FAX: 
+  eMail: 
+Größe der Platine: 30 mm x 85 mm
+
+Folgend die Beschreibung der erzeugten Dateien:
+
+ESP_1WireEmu_Busmaster.Top = 16 = Kupfer oben L1   ( *.Top )
+ESP_1WireEmu_Busmaster.Bot = 2 = Kupfer unten L2   ( *.Bot )
+ESP_1WireEmu_Busmaster.Tool = Bohrerliste
+ESP_1WireEmu_Busmaster.Drill = Durchkontaktierte Bohrungen
+ESP_1WireEmu_Busmaster.Outline = 23 = Platinen-Umriss   ( *.Outline )
+ESP_1WireEmu_Busmaster.StopTop = 18 = Lötstoppmaske oben   ( *.StopTop )
+ESP_1WireEmu_Busmaster.StopBot = 4 = Lötstoppmaske unten   ( *.StopBot )
+ESP_1WireEmu_Busmaster.PosiTop = 21 = Bestückungsdruck oben   ( *.PosiTop )
+ESP_1WireEmu_Busmaster.PasteTop = 19 = Lötpaste oben   ( *.PasteTop )
+ESP_1WireEmu_Busmaster.X3T = Gerber X3 Bauteil-Informationen oben
+ESP_1WireEmu_Busmaster.X3B = Gerber X3 Bauteil-Informationen unten
+
+
+Achtung: Dünnste Schrift ist kleiner 0,150mm: (0,104 bei 83,996 | 57,8315) auf Ebene 30
