@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ESP Installer</title>
+    <meta name="description"
+      content="Easily allow users to install ESP32 firmware on the web."
+    />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel='stylesheet' type='text/css' href='style.css'>
+    <script type="module" src="https://unpkg.com/esp-web-tools/dist/web/install-button.js?module"></script>
+    <script  type = "text/javascript"  src="javascript.js"></script>
+  </head>
+  <body>
+    <h2>Welcome to the HomeStatusDisplay web installer!</h2>
+    <div class="flasher">
+      <ol>
+        <li>Plug in your ESP to a USB port. We will install the HomeStatusDisplay to it.</li>
+        <li>if you update your device, please dont forget to save your settings at "files" tab before update.</li>
+        <li id="coms">Hit "Install" and select the correct COM port. <a onclick="showSerialHelp()">No device found?</a></li>
+        <li>Get HomeStatusDisplay installed and connected in less than 3 minutes!</li>
+      </ol>
+      <br><br>
+      
+      <select id="versions" class="btn" onchange="resetCheckboxes();setManifest();">
+
+      </select>
+      <br>
+      <div class="radio" onchange="setManifest()">
+        <input class="radio__input" type="radio" value="Standard" name="version" id="standard" checked>
+        <label class="radio__label" for="standard" id="standard_label">Standard</label>
+        <input class="radio__input" type="radio" value="Webserial" name="version" id="webserial">
+        <label class="radio__label" for="webserial" id="webserial_label">Webserial</label>
+      </div>
+
+      <br>
+      <div class="container inst-button">
+        <esp-web-install-button
+          id="web-install-button"
+          manifest=""
+        >
+          <button class="btn" slot="activate">Install</button>
+        </esp-web-install-button>
+      <br>
+
+    </div>
+
+    <div class="footer">
+      <a href="https://github.com/tobiasfaust/HomeStatusDisplay" target="_blank">GitHub</a>
+      &mdash;
+      <a href="https://github.com/tobiasfaust/HomeStatusDisplay/wiki" target="_blank">WiKi</a>
+      <p></p>
+      Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>.
+    </div>
+    
+  </body>
+</html>
