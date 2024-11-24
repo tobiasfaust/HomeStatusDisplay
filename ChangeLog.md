@@ -1,10 +1,13 @@
 Release 0.7:
   - change to PlatformIO
-  - fix some bugs
-  - change to ESPAsyncWebserver to achieve ESP32 compatibilty
-  - change max WiFi PSK length to 64 characters
-  - change max configurable LED mapping entries for ESP32 to 100
-  - change max configurable Color mapping entries for ESP32 to 50
-  - use ElegantOta to achive ESP32 compatibilty
-  - add ESP-Reboot after 5min running Accesspoint
-  - add gitpod integration
+    - fix some bugs
+    - change to ESPAsyncWebserver to achieve ESP32 compatibility
+    - change max WiFi PSK length to 64 characters
+    - change max configurable LED mapping entries for ESP32 to 100
+    - change max configurable Color mapping entries for ESP32 to 50
+    - use ElegantOta to achieve ESP32 compatibility
+    - add ESP-Reboot after 5 minutes running Access Point
+    - add Gitpod integration
+    - increase MQTT address length to 50 characters (thanks to JudgeDredd@fhem)
+    - add MQTT authentication (thanks to JudgeDredd@fhem)
+    - optionally secure WebUI-Config with username/password (thanks to JudgeDredd@fhem)
