@@ -1,0 +1,8 @@
+[
+    {
+        "path": "firmware/v0.7-1-development/manifest_all.json",
+        "version": "v0.7",
+        "stage": "development",
+        "build": 1
+    }
+]
