@@ -1,0 +1,7 @@
+https://github.com/adafruit/Adafruit_NeoPixel.git
+mathieucarbou/ESPAsyncWebServer@^3.1.1
+bblanchon/ArduinoJson@>6.19.0
+mathieucarbou/AsyncTCP@^3.2.3
+knolleary/PubSubClient
+https://github.com/ayushsharma82/WebSerial.git
+https://github.com/alanswx/ESPAsyncWiFiManager.git
