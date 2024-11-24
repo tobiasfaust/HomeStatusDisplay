@@ -1,0 +1,297 @@
+# https://github.com/marketplace/actions/test-compile-for-arduino
+# https://github.com/marketplace/actions/test-compile-for-arduino#multiple-boards-with-parameter-using-the-script-directly
+# https://github.com/actions/upload-release-asset/issues/17
+# https://github.com/dh1tw/remoteAudio/blob/master/.github/workflows/build.yml 
+
+name: Build&Deploy
+on:
+  push:
+    branches:
+      - master
+      - prelive
+      - development
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.yml'
+      - '**.sh'
+      - '**.py'
+
+jobs:
+    
+  build:
+    name: BuildAndDeploy-${{ matrix.variant.firmware }}
+    runs-on: ubuntu-latest
+    env:
+      REPOSITORY: ${{ github.event.repository.name }}
+      BRANCH_NAME: ${{ github.base_ref || github.ref_name }}
+
+    outputs:
+      fw_version: ${{ steps.json_params.outputs.version }}
+      fw_build: ${{ steps.json_params.outputs.build }}
+
+    strategy:
+      matrix:
+        variant:
+          - firmware: firmware_ESP32
+            architecture: ESP32
+            subvariant: standard
+          - firmware: firmware_ESP32-S2
+            architecture: ESP32-S2
+            subvariant: standard
+          - firmware: firmware_ESP32-S3
+            architecture: ESP32-S3
+            subvariant: standard
+          - firmware: firmware_ESP32-C3
+            architecture: ESP32-C3
+            subvariant: standard
+#          - firmware: firmware_ESP32.WebSerial
+#            architecture: ESP32
+#            subvariant: webSerial
+          - firmware: firmware_ESP8266
+            architecture: ESP8266
+            subvariant: standard  
+            
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: actions/setup-python@main
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -U platformio
+          pip install -U esptool
+
+      - name: Run PlatformIO
+        run: |
+          platformio run -e ${{ matrix.variant.firmware }}
+          if [ -d "data" ]; then
+            platformio run --target buildfs -e ${{ matrix.variant.firmware }}
+          fi
+
+      - name: Build merged Firmware for ESP32
+        if: contains(matrix.variant.architecture, 'ESP32')
+        run: |
+          esptool.py --chip ${{ matrix.variant.architecture }} merge_bin \
+            --output .pio/build/${{ matrix.variant.firmware }}/merged-firmware.bin \
+            --flash_mode dout \
+            --flash_freq 80m \
+            --flash_size 4MB \
+            0x1000 .pio/build/${{ matrix.variant.firmware }}/bootloader.bin \
+            0x8000 .pio/build/${{ matrix.variant.firmware }}/partitions.bin \
+            0x10000 .pio/build/${{ matrix.variant.firmware }}/firmware.bin 
+#            0x350000 .pio/build/${{ matrix.variant.firmware }}/littlefs.bin
+
+      - name: Display generated files
+        run: |
+          ls -R .pio/build/${{ matrix.variant.firmware }}/
+
+      - name: Schreibe Json/Manifest File
+        id: json_params 
+        run: |
+          mkdir -p release artifacts
+          python .github/scripts/createManifest.py \
+                --arch ${{ matrix.variant.architecture }} \
+                --variant ${{ matrix.variant.subvariant }} \
+                --stage ${{ env.BRANCH_NAME }} \
+                --repository ${{ env.REPOSITORY }} \
+                --binarypath .pio/build/${{ matrix.variant.firmware }}/ \
+                --releasepath release \
+                --artifactpath artifacts \
+                --build ${{ github.run_number }} \
+                --releasefile include/_Release.h   \
+                >> "$GITHUB_OUTPUT"   
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.variant.firmware }}
+          path: artifacts/*
+  
+#      - name: Upload to AWS S3
+#        uses: jakejarvis/s3-sync-action@master
+#        with:
+#          args: '--acl public-read --follow-symlinks'
+#        env:
+#          AWS_S3_BUCKET: 'tfa-releases'
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          AWS_REGION: 'eu-central-1'   # optional: defaults to us-east-1
+#          SOURCE_DIR: 'release'      # optional: defaults to entire repository
+#          DEST_DIR: ${{ env.REPOSITORY }}     
+
+
+  web-installer:
+    needs: [build]
+    runs-on: ubuntu-latest
+    env:
+      REPOSITORY: ${{ github.event.repository.name }}
+      BRANCH_NAME: ${{ github.base_ref || github.ref_name }}
+      VersDir: "web-installer/firmware/v${{ needs.build.outputs.fw_version }}-${{ needs.build.outputs.fw_build }}-${{ github.base_ref || github.ref_name }}"
+      FwDir: "web-installer/firmware"
+
+    steps:
+      - name: Checkout web-installer Repository
+        uses: actions/checkout@v4
+        with:
+          ref: 'web-installer'
+          path: 'web-installer'
+
+      - name: Checkout Application Repository
+        uses: actions/checkout@v4
+        with:
+          path: 'app'
+          sparse-checkout: |
+            .github
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      
+      - name: Download all Artifacts 
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.VersDir }}
+
+      - name: Display generated files
+        run: |
+          ls -R ./
+
+      # 
+      - name: create "manifest_all" and "versions" JSON
+        run: |
+          python -m pip install --upgrade pip
+          python app/.github/scripts/createVersionsFile.py --FwDir ${{ env.FwDir }} --VersDir ${{ env.VersDir }}
+
+      - name: Commit and push changes
+        run: |
+          cd web-installer
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add *
+          git commit -m "neue Firmware v${{ needs.build.outputs.fw_version }}-${{ needs.build.outputs.fw_build }}-${{ env.BRANCH_NAME }}"
+          git push origin web-installer  
+
+
+  create_Release:
+    needs: [build]
+    
+    runs-on: ubuntu-latest
+    if: endsWith(github.ref, 'master') || endsWith(github.ref, 'prelive')
+    
+    env:
+      GITHUB_REPOSITORY: ${{ github.event.repository.name }}
+      BRANCH_NAME: ${{ github.base_ref || github.ref_name }}
+
+    steps:
+      - name: Checkout web-installer Repository
+        uses: actions/checkout@v4
+        with:
+          ref: 'web-installer'
+          path: 'web-installer'
+
+      - name: Checkout Application Repository
+        uses: actions/checkout@v4
+        with:
+          path: 'app'
+      
+      - name: Download Artifacts 
+        uses: actions/download-artifact@v4
+        with:
+          path: ./release
+
+      - name: set Environment Variables
+        id: set_env_var
+        run: |
+                 VERSION=$(sed 's/[^0-9|.]//g' app/include/_Release.h)  # zb. 2.4.2 
+                 if [ ${{ env.BRANCH_NAME }} == 'master' ]; then IS_PRE='false'; else IS_PRE='true'; fi
+                 if [ ${{ env.BRANCH_NAME }} == 'master' ]; then POSTFIX=''    ; else POSTFIX='PRE'; fi
+                 echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+                 echo "IS_PRERELEASE=${IS_PRE}" >> "$GITHUB_OUTPUT"
+                 echo "RELEASENAME_POSTFIX=${POSTFIX}" >> "$GITHUB_OUTPUT"
+                 RELEASEBODY=$(awk -v RS='Release ' '/'$VERSION':(.*)/ {print $0}' app/ChangeLog.md)
+                 echo "${RELEASEBODY}" > CHANGELOG.md
+                 echo "tagname=v.${VERSION}-${POSTFIX}-${{ github.run_id }}" >> "$GITHUB_OUTPUT"
+
+            
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.set_env_var.outputs.tagname }}
+          release_name: Release ${{ steps.set_env_var.outputs.version }} ${{ steps.set_env_var.outputs.RELEASENAME_POSTFIX }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: ${{ steps.set_env_var.outputs.IS_PRERELEASE }}
+        
+      # erstelle das manifest_all.json speziell für das release mit den korrekten Pfaden
+      - name: Create manifest_all file
+        run: |
+          python app/.github/scripts/createReleaseAssetManifest.py \
+            --ReleaseDir release \
+            --ReleaseURL "https://github.com/tobiasfaust/${{ env.GITHUB_REPOSITORY }}/releases/download/${{ steps.set_env_var.outputs.tagname }}"
+           
+      
+      # suche alle Dateien aus dem Ordner release (siehe asset-download), incl aller unterordner und lade diese einzeln als release-asset hoch
+      # jede Datei behält ihren originalen Namen und contenttype. Identische Dateinamen werden überschrieben
+      - name: Upload Release Assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for dir in $(find release -type d); do
+            for file in "$dir"/*; do
+              if [ -f "$file" ]; then
+                echo "Uploading $file"
+                gh release upload -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} ${{ steps.set_env_var.outputs.tagname }} "$file" --clobber
+              fi
+            done
+          done
+
+        
+      # gehe durch alle verfügbaren releases im Repository durch, suche die manifest_all.json.
+      # Lade diese herunter ins lokale verzeichnis ./manifests und erstelle auf dieser Grundlage die releaseversions.json
+      - name: Download all Manifests, create ReleaseVersions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p manifests
+          tagNames=$(gh release ls -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} --json tagName)
+          #Beispiel TageNames: [{"tagName":"v.2.5.1-PRE-11935230894"},{"tagName":"v.2.5.1-PRE-11935083446"},{"tagName":"v.2.5.1-PRE-11934890507"},{"tagName":"v.2.5.0-PRE-5218822714"},{"tagName":"v.2.5.0-PRE-5218686311"},{"tagName":"v.2.5.0-PRE-5185111746"},{"tagName":"v.2.5.0-PRE-5179141026"},{"tagName":"v.2.5.0-PRE-5179098548"},{"tagName":"v.2.5.0-PRE-5179063279"},{"tagName":"v.2.5.0-PRE-5178990163"},{"tagName":"v.2.5.0-PRE-5178880279"},{"tagName":"v.2.5.0-PRE-5178666290"},{"tagName":"v.2.5.0-PRE-5178453676"},{"tagName":"v.2.5.0-PRE-5177774441"},{"tagName":"v.2.5.0-PRE-5177649258"},{"tagName":"v.2.5.0-PRE-5177594993"},{"tagName":"v.2.5.0-PRE-5177564195"},{"tagName":"v.2.5.0-PRE-5143099563"},{"tagName":"v.2.5.0-PRE-5143063918"},{"tagName":"v.2.5.0-PRE-5143034241"},{"tagName":"v.2.5.0-PRE-5142955799"},{"tagName":"v.2.5.0-PRE-5142928963"},{"tagName":"v.2.5.0-PRE-5142840006"},{"tagName":"v.2.5.0-PRE-5142801085"},{"tagName":"v.2.5.0-PRE-5142535620"},{"tagName":"v.2.5.0-PRE-5142528468"},{"tagName":"v.2.5.0-PRE-5142503306"},{"tagName":"v.2.5.0-PRE-5142483405"},{"tagName":"v.2.5.0-PRE-5142406641"},{"tagName":"v.2.5.0-PRE-5142378345"}] 
+          for tag in $(echo "$tagNames" | jq -r '.[].tagName'); do
+            echo "Downloading manifest: gh release download $tag -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} --pattern 'manifest_all.json' --output 'manifests/${tag}_manifest_all.json'"
+            gh release download $tag \
+              -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} \
+              --pattern "manifest_all.json" \
+                --output "manifests/${tag}/manifest_all.json" || true
+          done 
+          python app/.github/scripts/createReleaseVersions.py \
+            --ManifestDir manifests \
+            --VersionDir web-installer
+            ls -R ./manifests
+            ls -R ./release
+        
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            cd web-installer
+            git pull
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
+            git add *
+            git commit -m "update releaseversions.json"
+            git push origin web-installer  
+
+      - name: Upload Changelog artifact
+        uses: actions/upload-artifact@v4  
+        with:
+          name: CHANGELOG.md
+          path: CHANGELOG.md

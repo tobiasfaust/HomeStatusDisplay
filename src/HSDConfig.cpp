@@ -2,17 +2,6 @@
 #include <FS.h>
 #include <ArduinoJson.h>
 
-static const int MAX_SIZE_MAIN_CONFIG_FILE = 400;
-static const int JSON_BUFFER_MAIN_CONFIG_FILE = 500;
-
-static const int MAX_SIZE_COLOR_MAPPING_CONFIG_FILE = 1500;     // 1401 exactly
-static const int JSON_BUFFER_COLOR_MAPPING_CONFIG_FILE = 3800;  // 3628 exactly
-
-static const int MAX_SIZE_DEVICE_MAPPING_CONFIG_FILE = 1900;    // 1801 exactly
-static const int JSON_BUFFER_DEVICE_MAPPING_CONFIG_FILE = 4000; // 3908 exactly
-
-static const uint8_t DEFAULT_LED_BRIGHTNESS = 50;
-
 const constexpr HSDConfig::ColorTranslator HSDConfig::colorTranslator[8];
 
 HSDConfig::HSDConfig()
@@ -61,8 +50,11 @@ void HSDConfig::resetMainConfigData()
     
   setWifiSSID("");
   setWifiPSK("");
-
+  setGuiUser("admin");
+  setGuiPass("admin");
   setMqttServer("");
+  setMqttServerAuthUser("");
+  setMqttServerAuthPass("");
   setMqttStatusTopic("");
   setMqttTestTopic("");  
   setMqttWillTopic(""); 
@@ -106,16 +98,30 @@ bool HSDConfig::readMainConfigFile()
       printMainConfigFile(json);
       Serial.println(F(""));
 
-      if(json.containsKey(JSON_KEY_HOST) && json.containsKey(JSON_KEY_WIFI_SSID) && json.containsKey(JSON_KEY_WIFI_PSK) && 
-         json.containsKey(JSON_KEY_MQTT_SERVER) && json.containsKey(JSON_KEY_MQTT_STATUS_TOPIC) && json.containsKey(JSON_KEY_MQTT_TEST_TOPIC) && json.containsKey(JSON_KEY_MQTT_WILL_TOPIC) &&
-         json.containsKey(JSON_KEY_LED_COUNT) && json.containsKey(JSON_KEY_LED_PIN))
+      if(json.containsKey(JSON_KEY_HOST) && 
+         json.containsKey(JSON_KEY_WIFI_SSID) && 
+         json.containsKey(JSON_KEY_WIFI_PSK) && 
+         json.containsKey(JSON_KEY_GUI_USER) && 
+         json.containsKey(JSON_KEY_GUI_PASS) && 
+         json.containsKey(JSON_KEY_MQTT_SERVER) && 
+         json.containsKey(JSON_KEY_MQTT_AUTHUSER) && 
+         json.containsKey(JSON_KEY_MQTT_AUTHPASS) &&          
+         json.containsKey(JSON_KEY_MQTT_STATUS_TOPIC) && 
+         json.containsKey(JSON_KEY_MQTT_TEST_TOPIC) && 
+         json.containsKey(JSON_KEY_MQTT_WILL_TOPIC) &&
+         json.containsKey(JSON_KEY_LED_COUNT) && 
+         json.containsKey(JSON_KEY_LED_PIN))
       {
         Serial.println(F("Config data is complete."));
 
         setHost(json[JSON_KEY_HOST]);
         setWifiSSID(json[JSON_KEY_WIFI_SSID]);
         setWifiPSK(json[JSON_KEY_WIFI_PSK]);
+        setGuiUser(json[JSON_KEY_GUI_USER]);
+        setGuiPass(json[JSON_KEY_GUI_PASS]);
         setMqttServer(json[JSON_KEY_MQTT_SERVER]);
+        setMqttServerAuthUser(json[JSON_KEY_MQTT_AUTHUSER]);
+        setMqttServerAuthPass(json[JSON_KEY_MQTT_AUTHPASS]);
         setMqttStatusTopic(json[JSON_KEY_MQTT_STATUS_TOPIC]);
         setMqttTestTopic(json[JSON_KEY_MQTT_TEST_TOPIC]);
         setMqttWillTopic(json[JSON_KEY_MQTT_WILL_TOPIC]);
@@ -146,7 +152,11 @@ void HSDConfig::printMainConfigFile(JsonObject& json)
   Serial.print  (F("  • host            : ")); Serial.println((const char*)(json[JSON_KEY_HOST]));
   Serial.print  (F("  • wifiSSID        : ")); Serial.println((const char*)(json[JSON_KEY_WIFI_SSID]));
   Serial.println(F("  • wifiPSK         : not shown"));
+  Serial.print  (F("  • guiUser         : ")); Serial.println((const char*)(json[JSON_KEY_GUI_USER]));
+  Serial.println(F("  • guiPass         : not shown"));
   Serial.print  (F("  • mqttServer      : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_SERVER]));
+  Serial.print  (F("  • mqttServerUser  : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_AUTHUSER]));
+  Serial.println(F("  • mqttServerPass  : not shown"));
   Serial.print  (F("  • mqttStatusTopic : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_STATUS_TOPIC]));
   Serial.print  (F("  • mqttTestTopic   : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_TEST_TOPIC]));
   Serial.print  (F("  • mqttWillTopic   : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_WILL_TOPIC]));
@@ -274,7 +284,11 @@ void HSDConfig::writeMainConfigFile()
   json[JSON_KEY_HOST] = m_cfgHost;
   json[JSON_KEY_WIFI_SSID] = m_cfgWifiSSID;
   json[JSON_KEY_WIFI_PSK] = m_cfgWifiPSK;
+  json[JSON_KEY_GUI_USER] = m_cfgGuiUser;
+  json[JSON_KEY_GUI_PASS] = m_cfgGuiPass;
   json[JSON_KEY_MQTT_SERVER] = m_cfgMqttServer;
+  json[JSON_KEY_MQTT_AUTHUSER] = m_cfgMqttServerAuthUser;
+  json[JSON_KEY_MQTT_AUTHPASS] = m_cfgMqttServerAuthPass;
   json[JSON_KEY_MQTT_STATUS_TOPIC] = m_cfgMqttStatusTopic;
   json[JSON_KEY_MQTT_TEST_TOPIC] = m_cfgMqttTestTopic;
   json[JSON_KEY_MQTT_WILL_TOPIC] = m_cfgMqttWillTopic;
@@ -557,6 +571,30 @@ bool HSDConfig::setWifiPSK(const char* psk)
   return true;
 }
 
+const char* HSDConfig::getGuiUser() const
+{
+  return m_cfgGuiUser;
+}
+
+bool HSDConfig::setGuiUser(const char* guiuser)
+{
+  strncpy(m_cfgGuiUser, guiuser, MAX_GUI_USER_LEN);
+  m_cfgGuiUser[MAX_GUI_USER_LEN] = '\0';
+  return true;
+}
+
+const char* HSDConfig::getGuiPass() const
+{
+  return m_cfgGuiPass;
+}
+
+bool HSDConfig::setGuiPass(const char* guipass)
+{
+  strncpy(m_cfgGuiPass, guipass, MAX_GUI_PASS_LEN);
+  m_cfgGuiPass[MAX_GUI_PASS_LEN] = '\0';
+  return true;
+}
+
 const char* HSDConfig::getMqttServer() const
 {
   return m_cfgMqttServer;
@@ -566,6 +604,30 @@ bool HSDConfig::setMqttServer(const char* ip)
 {
   strncpy(m_cfgMqttServer, ip, MAX_MQTT_SERVER_LEN);
   m_cfgMqttServer[MAX_MQTT_SERVER_LEN] = '\0';
+  return true;
+}
+
+const char* HSDConfig::getMqttServerAuthUser() const
+{
+  return m_cfgMqttServerAuthUser;
+}
+
+bool HSDConfig::setMqttServerAuthUser(const char* mqttauthuser)
+{
+  strncpy(m_cfgMqttServerAuthUser, mqttauthuser, MAX_MQTT_SERVER_USER_LEN);
+  m_cfgMqttServerAuthUser[MAX_MQTT_SERVER_USER_LEN] = '\0';
+  return true;
+}
+
+const char* HSDConfig::getMqttServerAuthPass() const
+{
+  return m_cfgMqttServerAuthPass;
+}
+
+bool HSDConfig::setMqttServerAuthPass(const char* mqttauthpass)
+{
+  strncpy(m_cfgMqttServerAuthPass, mqttauthpass, MAX_MQTT_SERVER_PASS_LEN);
+  m_cfgMqttServerAuthPass[MAX_MQTT_SERVER_PASS_LEN] = '\0';
   return true;
 }
 
@@ -703,4 +765,3 @@ HSDConfig::Color HSDConfig::getLedColor(int colorMapIndex)
 {
   return m_cfgColorMapping.get(colorMapIndex)->color;
 }
-

@@ -39,6 +39,10 @@ void HSDWebserver::handleClient(unsigned long deviceUptime)
 }
 
 void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
+  if( strlen( m_config.getGuiUser() ) != 0 ) {
+    if( !request->authenticate( m_config.getGuiUser(), m_config.getGuiPass() ) )
+      return request->requestAuthentication();
+  }
   AsyncResponseStream *response = request->beginResponseStream("text/html");
   response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   response->addHeader("Pragma", "no-cache");
@@ -70,10 +74,11 @@ void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
   " <tr>"
   "  <td><b><font size='+1'>WiFi</font></b></td>"
   "  <td></td>"
-  " </tr>"
+  " </tr>");
+
+  html += F(    
   " <tr>"
   "  <td>SSID</td>");
-  
   html += F("<td><input type='text' id='wifiSSID' name='wifiSSID' value='");
   html += String(m_config.getWifiSSID());
   html += F("' size='30' maxlength='40' placeholder='SSID'></td>");
@@ -84,30 +89,52 @@ void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
 
   html += F(
   " <tr>"
+  "  <td><b><font size='+1'>HTTP</font></b></td>"
+  "  <td></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>GUI User</td>"
+  "  <td><input type='text' id='guiUser' name='guiUser' value='"); html += String(m_config.getGuiUser()); html += F("' size='30' maxlength='40' placeholder='Username'></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>GUI Passwort</td>"
+  "  <td><input type='password' id='guiPass' name='guiPass' value='"); html += String(m_config.getGuiPass()); html += F("' size='30' maxlength='40' placeholder='Password'></td>"
+  " </tr>");
+
+  html += F(
+  " <tr>"
   "  <td><b><font size='+1'>MQTT</font></b></td>"
   "  <td></td>"
   " </tr>"
   " <tr>"
-  "  <td>Server</td>");
-  html += F("  <td><input type='text' id='mqttServer' name='mqttServer' value='");
-  html += String(m_config.getMqttServer());
-  html += F("' size='30' maxlength='40' placeholder='IP or hostname'></td></tr><tr><td>Status topic</td>");
-  
+  "  <td>Server</td>"
+  "  <td><input type='text' id='mqttServer' name='mqttServer' value='"); html += String(m_config.getMqttServer()); html += F("' size='30' maxlength='50' placeholder='IP or hostname'></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>Server Auth User</td>"
+  "  <td><input type='text' id='mqttServerAuthUser' name='mqttServerAuthUser' value='"); html += String(m_config.getMqttServerAuthUser()); html += F("' size='30' maxlength='50' placeholder='Username'></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>Server Auth Password</td>"
+  "  <td><input type='password' id='mqttServerAuthPass' name='mqttServerAuthPass' value='"); html += String(m_config.getMqttServerAuthPass()); html += F("' size='30' maxlength='50' placeholder='Password'></td>"
+  " </tr>"
+
+  "<tr><td>Status topic</td>");
   html += F("  <td><input type='text' id='mqttStatusTopic' name='mqttStatusTopic' value='");
   html += String(m_config.getMqttStatusTopic());
-  html += F("' size='30' maxlength='40' placeholder='#'></td>"
+  html += F("' size='30' maxlength='50' placeholder='#'></td>"
   " </tr>"
   " <tr>"
   "  <td>Test topic</td>"
   "  <td><input type='text' id='mqttTestTopic' name='mqttTestTopic' value='");
   html += String(m_config.getMqttTestTopic());
-  html += F("' size='30' maxlength='40' placeholder='#'></td>"
+  html += F("' size='30' maxlength='50' placeholder='#'></td>"
   " </tr>"
   " <tr>"
   "  <td>Will topic</td>"
   "  <td><input type='text' id='mqttWillTopic' name='mqttWillTopic' value='");
   html += String(m_config.getMqttWillTopic());
-  html += F("' size='30' maxlength='40' placeholder='#'></td></tr>");
+  html += F("' size='30' maxlength='50' placeholder='#'></td></tr>");
 
   html += F(""
   " <tr>"
@@ -241,6 +268,10 @@ void HSDWebserver::deliverStatusPage(AsyncWebServerRequest *request) {
 }
 
 void HSDWebserver::deliverColorMappingPage(AsyncWebServerRequest *request) {
+  if( strlen( m_config.getGuiUser() ) != 0 ) {
+    if( !request->authenticate( m_config.getGuiUser(), m_config.getGuiPass() ) )
+      return request->requestAuthentication();
+  }
   AsyncResponseStream *response = request->beginResponseStream("text/html");
   response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   response->addHeader("Pragma", "no-cache");
@@ -387,6 +418,10 @@ bool HSDWebserver::deleteColorMappingEntry(AsyncWebServerRequest *request)
 }
 
 void HSDWebserver::deliverDeviceMappingPage(AsyncWebServerRequest *request) {
+  if( strlen( m_config.getGuiUser() ) != 0 ) {
+    if( !request->authenticate( m_config.getGuiUser(), m_config.getGuiPass() ) )
+      return request->requestAuthentication();
+  }
   AsyncResponseStream *response = request->beginResponseStream("text/html");
   response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   response->addHeader("Pragma", "no-cache");
@@ -559,9 +594,29 @@ bool HSDWebserver::updateMainConfig(AsyncWebServerRequest *request)
     needSave |= m_config.setWifiPSK(request->arg(JSON_KEY_WIFI_PSK).c_str());
   }
 
+  if (request->hasArg(JSON_KEY_GUI_USER))
+  {
+    needSave |= m_config.setGuiUser(request->arg(JSON_KEY_GUI_USER).c_str());
+  }
+  
+  if (request->hasArg(JSON_KEY_GUI_PASS)) 
+  {
+    needSave |= m_config.setGuiPass(request->arg(JSON_KEY_GUI_PASS).c_str());
+  }
+
   if (request->hasArg(JSON_KEY_MQTT_SERVER))
   {
     needSave |= m_config.setMqttServer(request->arg(JSON_KEY_MQTT_SERVER).c_str());
+  }
+
+  if (request->hasArg(JSON_KEY_MQTT_AUTHUSER))
+  {
+    needSave |= m_config.setMqttServerAuthUser(request->arg(JSON_KEY_MQTT_AUTHUSER).c_str());
+  }
+
+  if (request->hasArg(JSON_KEY_MQTT_AUTHPASS))
+  {
+    needSave |= m_config.setMqttServerAuthPass(request->arg(JSON_KEY_MQTT_AUTHPASS).c_str());
   }
   
   if (request->hasArg(JSON_KEY_MQTT_STATUS_TOPIC))
@@ -611,4 +666,3 @@ bool HSDWebserver::updateMainConfig(AsyncWebServerRequest *request)
 
   return needSave;
 }
-
