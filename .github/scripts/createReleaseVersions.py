@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser()
 
 # erwartete Parameter
 parser.add_argument('-m', '--ManifestDir', type=str, help='The Path where all manifest:_all.json are located', default='manifests')
-parser.add_argument('-v', '--VersionDir', type=str, help='Verzeichnis, wo releaseversions.json geschrieben werden soll', default='web-installer')
+parser.add_argument('-v', '--VersionDir', type=str, help='Verzeichnis, wo releases.json geschrieben werden soll', default='web-installer')
 
 # Parsen der Argumente
 args = parser.parse_args()
@@ -16,7 +16,7 @@ if args.ManifestDir:
 
     # Wenn Daten extrahiert wurden, speichere sie in der JSON-Datei 'versions.json'
     if extracted_data:
-        save_results_to_json(extracted_data, os.path.join(args.VersionDir, 'firmware/releaseversions.json'))
+        save_results_to_json(extracted_data, os.path.join(args.VersionDir, 'firmware/releases.json'))
     else:
         print("Keine relevanten 'manifest_all.json' Dateien gefunden.")
     
