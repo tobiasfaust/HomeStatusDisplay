@@ -81,6 +81,7 @@ jobs:
             >> "$GITHUB_OUTPUT"
 
       - name: Build merged Firmware
+        if: ${{ steps.buildFw.outputs.command != 'None' }}
         run: |
           ${{steps.buildFw.outputs.command}}
 
