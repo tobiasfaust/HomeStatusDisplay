@@ -13,13 +13,13 @@
     <script  type = "text/javascript"  src="javascript.js"></script>
   </head>
   <body>
-    <h2>Welcome to the HomeStatusDisplay web installer!</h2>
-    <div class="flasher">
+    <h2>Welcome to the {{REPOSITORY}} web installer!</h2>
+    <div id="flasher">
       <ol>
-        <li>Plug in your ESP to a USB port. We will install the HomeStatusDisplay to it.</li>
+        <li>Plug in your ESP to a USB port. We will install the {{REPOSITORY}} to it.</li>
         <li>if you update your device, please dont forget to save your settings at "files" tab before update.</li>
         <li id="coms">Hit "Install" and select the correct COM port. <a onclick="showSerialHelp()">No device found?</a></li>
-        <li>Get HomeStatusDisplay installed and connected in less than 3 minutes!</li>
+        <li>Get {{REPOSITORY}} installed and connected in less than 3 minutes!</li>
       </ol>
       <br><br>
       
@@ -47,12 +47,14 @@
     </div>
 
     <div class="footer">
-      <a href="https://github.com/tobiasfaust/HomeStatusDisplay" target="_blank">GitHub</a>
+      <a href="https://github.com/tobiasfaust/{{REPOSITORY}}" target="_blank">GitHub</a>
       &mdash;
-      <a href="https://github.com/tobiasfaust/HomeStatusDisplay/wiki" target="_blank">WiKi</a>
+      <a href="https://github.com/tobiasfaust/{{REPOSITORY}}/wiki" target="_blank">WiKi</a>
+      &mdash;
+      <a href="https://github.com/tobiasfaust/{{REPOSITORY}}/releases" target="_blank">Releases</a>
       <p></p>
       Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>.
     </div>
-    
+
   </body>
 </html>
