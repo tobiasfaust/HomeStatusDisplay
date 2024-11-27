@@ -13,7 +13,6 @@ m_colorMappingConfigFile(String("/colormapping.json")),
 m_deviceMappingConfigFile(String("/devicemapping.json"))
 {  
   // reset non-configurable members
-  setVersion("");
   setHost("");
 
   // reset configurable members
@@ -22,12 +21,11 @@ m_deviceMappingConfigFile(String("/devicemapping.json"))
   resetDeviceMappingConfigData();
 }
 
-void HSDConfig::begin(const char* version, const char* defaultIdentifier)
+void HSDConfig::begin(const char* defaultIdentifier)
 {
   Serial.println(F(""));
   Serial.println(F("Initializing config."));
 
-  setVersion(version);
   setHost(defaultIdentifier);
   
   if(startLittleFS)
@@ -537,14 +535,7 @@ bool HSDConfig::setHost(const char* host)
 
 const char* HSDConfig::getVersion() const
 {
-  return m_cfgVersion;
-}
-
-bool HSDConfig::setVersion(const char* version)
-{
-  strncpy(m_cfgVersion, version, MAX_VERSION_LEN);
-  m_cfgVersion[MAX_VERSION_LEN] = '\0';
-  return true;
+  return Release;
 }
 
 const char* HSDConfig::getWifiSSID() const

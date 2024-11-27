@@ -12,7 +12,7 @@ public:
 
   HomeStatusDisplay();
   
-  void begin(const char* version, const char* identifier);
+  void begin(const char* identifier);
   void work();
   
 private:

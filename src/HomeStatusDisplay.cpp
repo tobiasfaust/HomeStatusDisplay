@@ -25,13 +25,13 @@ m_uptime(0)
 {
 }
 
-void HomeStatusDisplay::begin(const char* version, const char* identifier)
+void HomeStatusDisplay::begin(const char* identifier)
 {
   // initialize serial
   Serial.begin(115200);
   Serial.println(F(""));
 
-  m_config.begin(version, identifier);
+  m_config.begin(identifier);
   m_wifi.begin();
   m_webServer.begin();
   m_leds.begin();

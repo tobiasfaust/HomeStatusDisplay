@@ -2,6 +2,7 @@
 
 #include "HSDConfigFile.h"
 #include "PreAllocatedLinkedList.h"
+#include <_Release.h>
 
 #ifdef ESP32
   #define startLittleFS LittleFS.begin(true)
@@ -139,7 +140,7 @@ public:
 
   HSDConfig();
 
-  void begin(const char* version, const char* defaultIdentifier);
+  void begin(const char* defaultIdentifier);
 
   void saveMain();
   
@@ -150,8 +151,7 @@ public:
   void updateDeviceMapping();
 
   const char* getVersion() const;
-  bool setVersion(const char* version);
-
+  
   const char* getHost() const;
   bool setHost(const char* host);
 
@@ -273,7 +273,6 @@ private:
 
   void onFileWriteError();
 
-  static const int MAX_VERSION_LEN           = 20;
   static const int MAX_HOST_LEN              = 30;
   static const int MAX_WIFI_SSID_LEN         = 30;
   static const int MAX_WIFI_PSK_LEN          = 64;
@@ -317,7 +316,6 @@ private:
   PreAllocatedLinkedList<DeviceMapping> m_cfgDeviceMapping;
   bool m_cfgDeviceMappingDirty;
   
-  char m_cfgVersion[MAX_VERSION_LEN + 1];
   char m_cfgHost[MAX_HOST_LEN + 1];
   char m_cfgWifiSSID[MAX_WIFI_SSID_LEN + 1];
   char m_cfgWifiPSK[MAX_WIFI_PSK_LEN + 1];
