@@ -2,9 +2,7 @@ name: Build&Test
 on:
   push:
     branches:
-      - master
-      - prelive
-      - development
+      - test
     paths:
       - '**.cpp'
       - '**.h'
