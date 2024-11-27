@@ -23,19 +23,21 @@
       </ol>
       <br><br>
       
-      <select id="versions" class="btn" onchange="resetCheckboxes();setManifest();">
+      <select id="versions" class="btn" onchange="resetCheckboxes();">
 
       </select>
       <br>
-      <div class="radio" onchange="setManifest()">
+      <div id="variants" class="radio">
+       <!--        
         <input class="radio__input" type="radio" value="Standard" name="version" id="standard" checked>
-        <label class="radio__label" for="standard" id="standard_label">Standard</label>
         <input class="radio__input" type="radio" value="Webserial" name="version" id="webserial">
+        <label class="radio__label" for="standard" id="standard_label">Standard</label>
         <label class="radio__label" for="webserial" id="webserial_label">Webserial</label>
+        -->
       </div>
 
       <br>
-      <div class="container inst-button">
+      <div id="web-install-div" class="container inst-button disabled">
         <esp-web-install-button
           id="web-install-button"
           manifest=""

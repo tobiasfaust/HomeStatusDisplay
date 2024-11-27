@@ -1,6 +1,7 @@
 // ************************************************
 window.addEventListener('DOMContentLoaded', init, false);
 
+var versions, releases;
 /**
  * Initializes the application by fetching firmware versions and releases,
  * then generates the select list, checks for supported versions, resets checkboxes,
@@ -11,15 +12,18 @@ window.addEventListener('DOMContentLoaded', init, false);
  * @throws {Error} If there is an error loading versions.
  */
 function init() {
+    handleTemplates();
+    
     Promise.all([
         fetch('firmware/versions.json').then(response => response.json()),
         fetch('firmware/releases.json').then(response => response.json())
     ])
     .then(([versions, releases]) => {
         GenerateSelectList(versions, releases);
+        window.versions = versions;
+        window.releases = releases;
         checkSupported(); 
         resetCheckboxes();
-        handleTemplates();
     })
     .catch(error => console.error('Error loading versions:', error));
 }
@@ -64,7 +68,6 @@ function getRepositoryName() {
  */
 function checkSupported() {
     if (document.getElementById('web-install-button').hasAttribute('install-unsupported')) unsupported();
-    else setManifest();
 }
 
 
@@ -84,19 +87,67 @@ function unsupported() {
 
 
 /**
- * Resets all radio buttons on the page.
+ * Resets all radio buttons on the page accordently selected version.
  * 
  * This function selects all input elements of type "radio" and sets their
  * `checked` property to `false` and their `disabled` property to `false`.
  * It effectively unchecks and enables all radio buttons.
  */
 function resetCheckboxes() {
-    const radioButtons = document.querySelectorAll('input[type="radio"]');
-    radioButtons.forEach(radio => {
-        radio.checked = false;
-        radio.disabled = false;
+    // gehe durch die json date versions und releases. Suche alle möglichen Ausprägungen zum Key "variant"
+    // und erstelle für jede Ausprägung ein radio button. Wenn der radio button ausgewählt wird, dann wird
+    // die Funktion setManifest aufgerufen und der Wert des radio buttons wird als Parameter übergeben.
+    
+    // disable install button
+    document.getElementById('web-install-div').classList.add('disabled');
+
+    const radioButtonsContainer = document.getElementById('variants');
+    radioButtonsContainer.innerHTML = ''; // Clear existing radio buttons
+
+    const variants = new Set();
+
+    // Collect all unique variants from versions and releases
+    versions.forEach(version => {
+        if (version.variant) {
+            variants.add(version.variant);
+        }
     });
-}
+
+    releases.forEach(release => {
+        if (release.variant) {
+            variants.add(release.variant);
+        }
+    });
+
+    // Create radio buttons for each variant if > 1
+    if (variants.size > 1) {
+        document.getElementById('versions').removeEventListener('change', setManifest); 
+
+        variants.forEach(variant => {
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'variant';
+            radio.value = variant;
+            radio.id = variant;
+            radio.classList.add('radio__input');
+            radio.addEventListener('change', () => setManifest());
+            radio.disabled = false;
+            radio.checked = false;
+
+            const label = document.createElement('label');
+            label.classList.add('radio__label');
+            label.setAttribute('for', variant);
+            label.appendChild(document.createTextNode(variant));
+
+            // Append the radio button and label to the container
+            radioButtonsContainer.appendChild(radio);
+            radioButtonsContainer.appendChild(label);
+        });
+    } else {
+        document.getElementById('versions').addEventListener('change', setManifest);
+    }
+} 
+    
 
 /**
  * Generates a select list with grouped and sorted versions and releases.
@@ -120,9 +171,13 @@ function GenerateSelectList(versions, releases) {
     versions.forEach(obj => {
         if (obj.stage == "development") {
             if (!stages[obj.stage]) {
-                stages[obj.stage] = [];
+                stages[obj.stage] = {};
             }
-            stages[obj.stage].push(obj);
+            if (!stages[obj.stage][obj.build]) {
+                stages[obj.stage][obj.build] = [];
+            }
+
+            stages[obj.stage][obj.build].push(obj);
         }
     });
 
@@ -131,39 +186,76 @@ function GenerateSelectList(versions, releases) {
         if (!stages[obj.stage]) {
                 stages[obj.stage] = [];
             }
-            stages[obj.stage].push(obj);
+        if (!stages[obj.stage][obj.build]) {
+            stages[obj.stage][obj.build] = [];
+        }
+        stages[obj.stage][obj.build].push(obj);
     });
 
     // Sort each stage by build number in descending order
     for (const stage in stages) {
-        stages[stage].sort((a, b) => b.build - a.build);
+        for (const build in stages[stage]) {
+            stages[stage][build].sort((a, b) => b.build - a.build);
+        }
     }
 
     // Create optgroups and options
     for (const stage in stages) {
         const optgroup = document.createElement('optgroup');
         optgroup.label = stage;
-        stages[stage].forEach(obj => {
+        
+        for (const build in stages[stage]) {
+            const uniqueBuild = stages[stage][build][0];
             const option = document.createElement('option');
-            option.value = obj.path;
-            option.text = obj.version + " (Build " + obj.build + ")";
+            option.value = uniqueBuild.build;
+            option.text = uniqueBuild.version + " (Build " + uniqueBuild.build + ")";
             optgroup.appendChild(option);
-        });
+        }
         select.appendChild(optgroup);
     }
 }
 
 /**
- * Sets the manifest attribute of the web install button based on the selected option in the versions dropdown.
+ * Sets the manifest attribute of the web install button based on the selected option 
+ * in the versions dropdown and radiobutton.
  * 
- * This function retrieves the selected option from a dropdown menu with the ID 'versions', 
- * extracts its value, and sets this value as the 'manifest' attribute of the element with the ID 'web-install-button'.
+ * This function retrieves the selected option from the dropdown menu with the ID 'versions', 
+ * extracts its value (buildnumber), get value of optional radiobutton (variant)
+ * and extract the right manifest from versions/releases and sets the correct 'manifest' attribute 
+ * to the ID 'web-install-button'.
  */
 function setManifest() {
-    var sel = document.getElementById('versions');
-    var opt = sel.options[sel.selectedIndex];
-    var m = opt.value;
-    document.getElementById('web-install-button').setAttribute('manifest', m);
+    build = document.getElementById('versions').value;
+    variant = document.querySelector('input[name="variant"]:checked')?.value || undefined
+
+    let manifestPath;
+
+    // Search in releases
+    for (const release of releases) {
+        if (release.build == build && (!variant || release.variant == variant)) {
+            manifestPath = release.path;
+            break;
+        }
+    }
+
+    // If not found in releases, search in versions
+    if (!manifestPath) {
+        for (const version of versions) {
+            if (version.build == build && (!variant || version.variant == variant)) {
+                manifestPath = version.path;
+                break;
+            }
+        }
+    }
+
+    if (manifestPath) {
+        document.getElementById('web-install-button').setAttribute('manifest', manifestPath);
+        document.getElementById('web-install-div').classList.remove('disabled');
+    } else {
+        console.error('Manifest not found for the selected build and variant.');
+    }
+
+    //console.log('Selected build:', build, 'Selected variant:', variant, 'Manifest path:', manifestPath);
 }
 
 /**
@@ -178,10 +270,6 @@ function setManifest() {
  */
 function handleTemplates() {
     const elem = {"template": "REPOSITORY", value: getRepositoryName() };
-    
-    // gehe durch elem durch und suche in allen Objekten mit innerHTML den value aus "template" 
-    // eingeschlossen in {{ }} und ersetze diesen mit dem Wert aus value
-
     document.querySelectorAll('*').forEach(node => {
         if (node.innerHTML.includes('{{' + elem.template + '}}')) {
             while (node.innerHTML.includes('{{' + elem.template + '}}')) {

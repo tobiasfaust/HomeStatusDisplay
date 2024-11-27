@@ -52,7 +52,7 @@ img {
   animation: fi 1s;
 }
 
-.disabled__label {
+.disabled {
   display: none;
 }
 
