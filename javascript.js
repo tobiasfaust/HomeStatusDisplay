@@ -17,7 +17,14 @@ function init() {
     Promise.all([
         fetch('firmware/versions.json').then(response => response.json()),
         fetch('firmware/releases.json')
-            .then(response => response.ok ? response.json() : [])
+            .then(response => {
+                if (response.status === 404) {
+                    console.log('No releases found.');
+                    return [];
+                }
+                return response.json();
+            })
+            .catch(() => [])
     ])
     .then(([versions, releases]) => {
         GenerateSelectList(versions, releases);
@@ -146,6 +153,8 @@ function resetCheckboxes() {
         });
     } else {
         document.getElementById('versions').addEventListener('change', setManifest);
+        document.getElementById('web-install-div').classList.remove('disabled');
+        console.log('Only one variant found. Skipping radio buttons.');
     }
 } 
     
