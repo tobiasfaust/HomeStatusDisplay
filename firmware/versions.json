@@ -1,14 +1,9 @@
 [
     {
-        "path": "firmware/v0.7-1-development/manifest_all.json",
+        "path": "firmware/v0.7-5-development/manifestAll-standard.json",
         "version": "v0.7",
         "stage": "development",
-        "build": 1
-    },
-    {
-        "path": "firmware/v0.7-3-development/manifest_all.json",
-        "version": "v0.7",
-        "stage": "development",
-        "build": 3
+        "variant": "standard",
+        "build": 5
     }
 ]
