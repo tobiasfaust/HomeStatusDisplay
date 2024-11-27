@@ -39,9 +39,6 @@ jobs:
           - firmware: firmware_ESP32-S2
             architecture: ESP32-S2
             subvariant: standard
-          - firmware: firmware_ESP32-S
-            architecture: ESP32-S
-            subvariant: standard
           - firmware: firmware_ESP32-S3
             architecture: ESP32-S3
             subvariant: standard
