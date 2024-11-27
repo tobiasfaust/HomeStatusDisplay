@@ -1,3 +1,21 @@
+'''
+Description:
+This script merges firmware binaries for ESP32 and ESP8266 chip families using esptool.py.
+It reads partition offsets from the partition CSV file and constructs the appropriate merge_bin command.
+Usage:
+    python createMergedFirmware.py -c <ChipFamily> -b <BuildDir> -p <PathOfPartitionsCSV>
+Arguments:
+    -c, --ChipFamily (str): The chip family (e.g., ESP8266, ESP32-S3, etc.). Default is 'ESP32'. Required.
+    -b, --BuildDir (str): The build directory containing the built firmware binaries. Required.
+    -p, --PathOfPartitionsCSV (str): The path to the partitions.csv file. Default is 'partitions.csv'. Required.
+Functions:
+    readOffsetFromPartitionCSV(path: str, name: str) -> int:
+        Args:
+        Returns:
+Example:
+    python createMergedFirmware.py -c ESP32 -b ./build -p ./partitions.csv
+'''
+
 from myUtils import *
 import argparse
 import os

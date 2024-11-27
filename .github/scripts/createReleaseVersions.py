@@ -16,7 +16,7 @@ if args.ManifestDir:
 
     # Wenn Daten extrahiert wurden, speichere sie in der JSON-Datei 'versions.json'
     if extracted_data:
-        save_results_to_json(extracted_data, os.path.join(args.VersionDir, 'firmware/releases.json'))
+        save_results_to_json(extracted_data, os.path.join(args.VersionDir, 'releases.json'))
     else:
         print("Keine relevanten 'manifest_all.json' Dateien gefunden.")
     

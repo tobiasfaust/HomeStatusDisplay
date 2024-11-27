@@ -44,11 +44,15 @@ if args.releasefile is not None and not os.path.isfile(args.releasefile):
 os.makedirs(args.releasepath, exist_ok=True)
 os.makedirs(args.artifactpath, exist_ok=True)
 
+# Read version number from release file
 with open(args.releasefile, 'r') as file:
     #ermittle den String aus der Datei
     VERSION = file.read().split('"')[1]
     VersionNumber = ''.join(filter(str.isdigit, VERSION))
 
+FileExtension = f'{args.arch}.v{VERSION}-{args.build}.{args.variant}.{args.stage}'
+
+# process the firmware binaries into RELEASEPATH
 for root, _, files in os.walk(args.binarypath):
     for file in files:
         if file == 'firmware.bin':
@@ -56,13 +60,13 @@ for root, _, files in os.walk(args.binarypath):
             FILEEXT = os.path.splitext(file)[1][1:]
             FIRMWARENAME = args.binarypath.split(os.sep)[-2]  # get the name of the firmware folder
             
-            BINARYFILENAME = f"{FILENAME}.{args.arch}.v{VERSION}-{args.build}.{args.stage}"
-            DOWNLOADURL = f"https://tobiasfaust.github.io/{args.repository}/firmware/{BINARYFILENAME}.{FILEEXT}"
+            DOWNLOADURL = f"https://tobiasfaust.github.io/{args.repository}/firmware/{FILENAME}.{FileExtension}.{FILEEXT}"
 
             ################ Create custom json ##################
             json_data = {
                 "name": f"{args.repository} (v{VERSION}-{args.stage})",
                 "version": VERSION,
+                "variant": args.variant,
                 "build": (int(args.build)),
                 "number": int(f'{VersionNumber}{args.build}'),
                 "stage": args.stage,
@@ -74,8 +78,8 @@ for root, _, files in os.walk(args.binarypath):
                 logging.info(f"\n\nEcho json string")
                 logging.info(json.dumps(json_data, indent=2))
 
-            save_results_to_json(json_data, os.path.join(args.releasepath, f"{BINARYFILENAME}.json"))   
-            shutil.copyfile(os.path.join(root, file), os.path.join(args.releasepath, f'{BINARYFILENAME}.{FILEEXT}'))
+            save_results_to_json(json_data, os.path.join(args.releasepath, f"{FILENAME}.{FileExtension}.json"))   
+            shutil.copyfile(os.path.join(root, file), os.path.join(args.releasepath, f'{FILENAME}.{FileExtension}.{FILEEXT}'))
             
             ################ Create Manifest ##################
             manifest_data = {
@@ -83,41 +87,44 @@ for root, _, files in os.walk(args.binarypath):
                 "chipFamily": args.arch,
                 "stage": args.stage,
                 "build": int(args.build),
+                "variant": args.variant,
                 "version": f"v{VERSION}",
                 "parts": []
             }
 
+            SubDir = f'v{VERSION}-{args.build}-{args.stage}'
+
             if os.path.isfile(os.path.join(args.binarypath, "merged-firmware.bin")):
                 manifest_data["parts"].append({
-                    "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/v{VERSION}-{args.build}-{args.stage}/{FIRMWARENAME}/merged-firmware.{args.arch}.v{VERSION}-{args.build}.{args.stage}.bin",
+                    "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/{SubDir}/{FIRMWARENAME}/merged-firmware.{FileExtension}.bin",
                     "offset": 0
                 })
             else:
                 # fuer ESP8266
                 manifest_data["parts"].append({
-                    "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/v{VERSION}-{args.build}-{args.stage}/{FIRMWARENAME}/{BINARYFILENAME}.{FILEEXT}",
+                    "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/{SubDir}/{FIRMWARENAME}/{FILENAME}.{FileExtension}.{FILEEXT}",
                     "offset": 0
                 })
 
 #            if os.path.isfile(os.path.join(args.binarypath, "bootloader.bin")):
 #                manifest_data["parts"].append({
-#                    "path": f"https://tobiasfaust.github.io/test/firmware/v{VERSION}-{args.build}-{args.stage}/{FIRMWARENAME}/bootloader.{args.arch}.v{VERSION}-{args.build}.{args.stage}.bin",
+#                    "path": f"https://tobiasfaust.github.io/test/firmware/{SubDir}/{FIRMWARENAME}/bootloader.{FileExtension}.bin",
 #                    "offset": 0
 #                })
 #            if os.path.isfile(os.path.join(args.binarypath, "partitions.bin")):
 #                manifest_data["parts"].append({
-#                    "path": f"https://tobiasfaust.github.io/test/firmware/v{VERSION}-{args.build}-{args.stage}/{FIRMWARENAME}/partitions.{args.arch}.v{VERSION}-{args.build}.{args.stage}.bin",
+#                    "path": f"https://tobiasfaust.github.io/test/firmware/{SubDir}/{FIRMWARENAME}/partitions.{FileExtension}.bin",
 #                    "offset": 32768
 #                })
 #            if os.path.isfile(os.path.join(args.binarypath, "littlefs.bin")):
 #                manifest_data["parts"].append({
-#                    "path": f"https://tobiasfaust.github.io/test/firmware/v{VERSION}-{args.build}-{args.stage}/{FIRMWARENAME}/littlefs.{args.arch}.v{VERSION}-{args.build}.{args.stage}.bin",
+#                    "path": f"https://tobiasfaust.github.io/test/firmware/{SubDir}/{FIRMWARENAME}/littlefs.{FileExtension}.bin",
 #                    "offset": 3473408
 #                })
 #
 #            OFFSET = 0 if "ESP8266" in args.arch else 65536
 #            manifest_data["parts"].append({
-#                "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/v{VERSION}-{args.build}-{args.stage}/{FIRMWARENAME}/{BINARYFILENAME}.{FILEEXT}",
+#                "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/{SubDir}/{FIRMWARENAME}/{FILENAME}.{FileExtension}.{FILEEXT}",
 #                "offset": OFFSET
 #            })
 
@@ -135,8 +142,7 @@ for root, _, files in os.walk(args.binarypath):
             FILENAME = os.path.splitext(file)[0]
             FILEEXT = os.path.splitext(file)[1][1:]
 
-            BINARYFILENAME = f"{FILENAME}.{args.arch}.v{VERSION}-{args.build}.{args.stage}"
-            shutil.copyfile(os.path.join(root, file), os.path.join(args.artifactpath, f'{BINARYFILENAME}.{FILEEXT}'))
+            shutil.copyfile(os.path.join(root, file), os.path.join(args.artifactpath, f'{FILENAME}.{FileExtension}.{FILEEXT}'))
             
 ################## handle Github_Outputs ####################
 print(f"version={VERSION}")

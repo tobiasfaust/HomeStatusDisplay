@@ -55,9 +55,31 @@ def renameDirs(root: str) -> None:
                 logging.info(f"Verzeichnis umbenannt: {old_dirpath} -> {new_dirpath}")
 
 
+def getAllVariantsFromManifest(root: str) -> list:
+    variants = []
+
+    # Durchlaufe alle Unterverzeichnisse und Dateien im Verzeichnis uns finde alle 'manifest.json' Dateien
+    # extrahiere daraus den Wert aus dem Key "variant" und speichere diese ohne Dubletten in der Liste
+    for dirpath, dirnames, filenames in os.walk(root):
+        for filename in filenames:
+            if filename == 'manifest.json':
+                manifest_path = os.path.join(dirpath, filename)
+                try:
+                    manifest_data = read_json_file(manifest_path)
+                    if manifest_data is not None:
+                        variant = manifest_data.get('variant')
+                        if variant is not None and variant not in variants:
+                            variants.append(variant)
+                except json.JSONDecodeError:
+                    logging.warning(f"Warnung: Fehler beim Parsen der JSON-Datei {manifest_path}.")
+                except Exception as e:
+                    logging.error(f"Fehler beim Verarbeiten der Datei {manifest_path}: {e}")
+    
+    return variants if variants else None
+
 def process_manifests(root: str) -> None:
     """
-    Funktion zum Suchen der 'manifest.json', Extrahieren der relevanten Daten und Erstellen der neuen JSON-Datei "manifest_all.json"
+    Funktion zum Suchen der 'manifest.json', Extrahieren der relevanten Daten und Erstellen der neuen JSON-Datei "manifestAll"
          
     <b>Parameter:</b>
         root (string): das Root verzeichnis über welches iteriert werden soll
@@ -65,72 +87,75 @@ def process_manifests(root: str) -> None:
     <b>Rückgabewert:</b>
         keiner
     """
-    
-    headerIsWritten = False
-    new_manifest_data = {}
+    # Ermittle alle Varianten aus den 'manifest.json' Dateien
+    variants = getAllVariantsFromManifest(root)
 
-    # Durchlaufe alle Unterverzeichnisse und Dateien im Verzeichnis
-    for dirpath, dirnames, filenames in os.walk(root):
-        # Prüfe, ob 'manifest.json' im aktuellen Verzeichnis existiert
-        if 'manifest.json' in filenames:
-            manifest_path = os.path.join(dirpath, 'manifest.json')
+    for variant in variants:
+        headerIsWritten = False
+        new_manifest_data = {}
+        # Durchlaufe alle Unterverzeichnisse und Dateien im Verzeichnis
+        for dirpath, dirnames, filenames in os.walk(root):
+            # Prüfe, ob 'manifest.json' im aktuellen Verzeichnis existiert
+            if 'manifest.json' in filenames:
+                manifest_path = os.path.join(dirpath, 'manifest.json')
 
-            try:
-                # Öffne und lade die JSON-Daten aus der 'manifest.json' Datei
-                manifest_data = read_json_file(manifest_path)
-                if manifest_data is not None:
-                    if headerIsWritten is False:
-                        # Extrahiere die relevanten Informationen: 'name', 'chipFamily', 'version', 'stage' und 'parts'
-                        name = manifest_data.get('name')
-                        version = manifest_data.get('version')
-                        stage = manifest_data.get('stage')
-                        build = manifest_data.get('build')
-                        
-                        # Wenn die erforderlichen Felder vorhanden sind, erstelle die neue 'manifest_all.json' Datei
-                        if name and version and stage:
-                            headerIsWritten = True
-                            # Das neue Dictionary für 'manifest_all.json'
-                            new_manifest_data = {
-                                "name": name,
-                                "version": version,
-                                "stage": stage,
-                                "build": build, 
-                                "builds": []  # Wir werden die "builds" später mit chipFamily und parts füllen
-                            }
-
-                    # Füge 'chipFamily' und 'parts' als Array zu 'builds' hinzu
-                    chipFamily = manifest_data.get('chipFamily')
-                    parts = manifest_data.get('parts', [])
-
-                    if chipFamily:
-                        new_manifest_data["builds"].append({
-                            "chipFamily": chipFamily,
-                            "parts": parts
-                        })
-                        
-            except json.JSONDecodeError:
-                logging.warning(f"Warnung: Fehler beim Parsen der JSON-Datei {manifest_path}.")
-            except Exception as e:
-                logging.error(f"Fehler beim Verarbeiten der Datei {manifest_path}: {e}")
-    
-    if manifest_path :
-        # Der Pfad für die neue 'manifest_all.json' Datei
-        parent_dir = os.path.dirname(os.path.dirname(manifest_path))
-        new_manifest_path = os.path.join(parent_dir, 'manifest_all.json')
+                try:
+                    # Öffne und lade die JSON-Daten aus der 'manifest.json' Datei
+                    manifest_data = read_json_file(manifest_path)
+                    if manifest_data is not None and manifest_data.get('variant') == variant:
+                        if headerIsWritten is False:
+                            # Extrahiere die relevanten Informationen: 'name', 'chipFamily', 'version', 'stage' und 'parts'
+                            name = manifest_data.get('name')
+                            version = manifest_data.get('version')
+                            stage = manifest_data.get('stage')
+                            build = manifest_data.get('build')
                             
-        # Schreibe die neue JSON-Datei
-        save_results_to_json(new_manifest_data, new_manifest_path)
+                            # Wenn die erforderlichen Felder vorhanden sind, erstelle die neue 'manifestAll.json' Datei
+                            if name and version and stage:
+                                headerIsWritten = True
+                                # Das neue Dictionary für 'manifestAll.json'
+                                new_manifest_data = {
+                                    "name": name,
+                                    "version": version,
+                                    "stage": stage,
+                                    "build": build, 
+                                    "variant": variant,
+                                    "builds": []  # Wir werden die "builds" später mit chipFamily und parts füllen
+                                }
+
+                        # Füge 'chipFamily' und 'parts' als Array zu 'builds' hinzu
+                        chipFamily = manifest_data.get('chipFamily')
+                        parts = manifest_data.get('parts', [])
+
+                        if chipFamily:
+                            new_manifest_data["builds"].append({
+                                "chipFamily": chipFamily,
+                                "parts": parts
+                            })
                             
-        logging.info(f"Manifest-Daten erfolgreich in {new_manifest_path} gespeichert.")
+                except json.JSONDecodeError:
+                    logging.warning(f"Warnung: Fehler beim Parsen der JSON-Datei {manifest_path}.")
+                except Exception as e:
+                    logging.error(f"Fehler beim Verarbeiten der Datei {manifest_path}: {e}")
+        
+        if manifest_path and new_manifest_data:
+            # Der Pfad für die neue 'manifestAll.json' Datei
+            parent_dir = os.path.dirname(os.path.dirname(manifest_path))
+            new_manifest_path = os.path.join(parent_dir, f'manifestAll-{variant}.json')
+                                
+            # Schreibe die neue JSON-Datei
+            save_results_to_json(new_manifest_data, new_manifest_path)
+                                
+            logging.info(f"Manifest-Daten erfolgreich in {new_manifest_path} gespeichert.")
             
 
-def search_manifests_and_extract_version(root: str, keepPath: bool) -> list :
+def search_manifests_and_extract_version(root: str, keepPath: bool) -> list:
     """
-    Funktion zum Suchen und Extrahieren der relevanten Informationen aus manifest_all.json-Dateien
+    Funktion zum Suchen und Extrahieren der relevanten Informationen aus manifestAll-*.json-Dateien
          
     <b>Parameter:</b>
         root (string): das Root verzeichnis über welches iteriert werden soll
-        keepPath (bool): ob der originale Pfad aus manifest_all.json behalten werden soll, anosnsten wird der lokale Pfad gesetzt
+        keepPath (bool): ob der originale Pfad aus manifestAll-*.json behalten werden soll, ansonsten wird der lokale Pfad gesetzt
 
     <b>Rückgabewert:</b>
         Liste von JsonObjekten
@@ -139,12 +164,10 @@ def search_manifests_and_extract_version(root: str, keepPath: bool) -> list :
     
     # Durchlaufe alle Unterverzeichnisse im angegebenen Verzeichnis
     for dirpath, dirnames, filenames in os.walk(root):
-        # Prüfe, ob eine Datei existiert die mit 'manifest_all.json' aufhört
+        # Prüfe, ob eine Datei existiert die mit 'manifestAll-*.json' aufhört
         for filename in filenames:
-
             manifest_path = os.path.join(dirpath, filename)
-            if filename.endswith('manifest_all.json'):
-
+            if filename.startswith('manifestAll-') and filename.endswith('.json'):
                 try:
                     # Öffne und lade die JSON-Daten aus der Datei
                     manifest_data = read_json_file(manifest_path)
@@ -154,12 +177,13 @@ def search_manifests_and_extract_version(root: str, keepPath: bool) -> list :
                         version = manifest_data.get('version', None)
                         stage = manifest_data.get('stage', None)
                         build = manifest_data.get('build', None)
-
+                        variant = manifest_data.get('variant', None)
+                        
                         # Extrahiere den ersten 'path' aus 'parts' falls vorhanden, 
                         # extrahiere daraus den Pfad
                         try:
                             path = manifest_data.get('builds', [])[0].get('parts', [])[0].get('path')
-                            path = os.path.join(os.path.dirname(path), 'manifest_all.json')
+                            path = os.path.join(os.path.dirname(path), filename)
                         except:
                             path = None
                         
@@ -170,9 +194,10 @@ def search_manifests_and_extract_version(root: str, keepPath: bool) -> list :
                         # Falls sowohl 'version', 'build' und 'stage' vorhanden sind, füge sie zum Ergebnis hinzu
                         if version is not None and stage is not None:
                             results.append({
-                                'path': path ,
+                                'path': path,
                                 'version': version,
                                 'stage': stage,
+                                'variant': variant,
                                 'build': int(build) if build else 0
                             })
                 
@@ -208,7 +233,7 @@ def deleteVersions(root: str, keepVersions: int, versions: list = None) -> None:
     """
     lädt das json 'versions.json' in 'root' und durchsucht das array darin. Lädt die Attribute 'build' und 'path'. 
     Sortiert alle aufsteigend nach 'build' und entfernt daraus die ersten 'keepVersions' einträge.
-    Die 'path' variable zeigt auf die manifest_all.json datei. Dessen gesamter Ordner wird nun für alle übrigen Einträge gelöscht.
+    Die 'path' variable zeigt auf die manifestAll datei. Dessen gesamter Ordner wird nun für alle übrigen Einträge gelöscht.
 
     <b>Parameter:</b>
         root (string): das Root verzeichnis über welches iteriert werden soll
@@ -224,7 +249,7 @@ def deleteVersions(root: str, keepVersions: int, versions: list = None) -> None:
         versions_file = os.path.join(root, 'versions.json')
         versions_data = read_json_file(versions_file)
         if versions_data is None:
-            logging.error(f"Fehler beim Veraarbeiten der Datei {versions_file}")
+            logging.error(f"Fehler beim Verarbeiten der Datei {versions_file}")
             return
     else:
         versions_data = versions
@@ -238,8 +263,6 @@ def deleteVersions(root: str, keepVersions: int, versions: list = None) -> None:
         build = entry.get('build', None)
         path = entry.get('path', None)
         stage = entry.get('stage', None)
-
-        # TODO: stage wird aktuell nicht berücksichtigt
 
         # Wenn 'build' und 'path' vorhanden sind, füge sie zum Dictionary hinzu
         if build is not None and path is not None and stage is not None:
