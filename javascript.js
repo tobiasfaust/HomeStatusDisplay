@@ -16,7 +16,8 @@ function init() {
     
     Promise.all([
         fetch('firmware/versions.json').then(response => response.json()),
-        fetch('firmware/releases.json').then(response => response.json())
+        fetch('firmware/releases.json')
+            .then(response => response.ok ? response.json() : [])
     ])
     .then(([versions, releases]) => {
         GenerateSelectList(versions, releases);
