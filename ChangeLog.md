@@ -12,3 +12,4 @@ Release 0.7:
   - add MQTT authentication (thanks to JudgeDredd@fhem)
   - optionally secure WebUI-Config with username/password (thanks to JudgeDredd@fhem)
   - add WebInstaller
+  - change custom wifi handling to ImprovWiFiLibrary
