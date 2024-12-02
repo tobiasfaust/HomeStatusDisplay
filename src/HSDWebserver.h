@@ -26,6 +26,8 @@ public:
 
   void begin();
   void handleClient(unsigned long deviceUptime);
+  void startWebServer();
+  void stopWebServer();
 
 private:
 

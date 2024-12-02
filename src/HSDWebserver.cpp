@@ -29,7 +29,15 @@ void HSDWebserver::begin()
   //ElegantOTA.onProgress(onOTAProgress);
   //ElegantOTA.onEnd(onOTAEnd);
 
+  //m_server.begin(); // handled via ImprovWifiLibrary Callback
+}
+
+void HSDWebserver::startWebServer() {
   m_server.begin();
+}
+
+void HSDWebserver::stopWebServer() {
+  m_server.end();
 }
 
 void HSDWebserver::handleClient(unsigned long deviceUptime)
@@ -69,23 +77,6 @@ void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
   html += F("  <td><input type='text' id='host' name='host' value='");
   html += String(m_config.getHost());
   html += F("' size='30' maxlength='40' placeholder='host'></td></tr>");
-
-  html += F(
-  " <tr>"
-  "  <td><b><font size='+1'>WiFi</font></b></td>"
-  "  <td></td>"
-  " </tr>");
-
-  html += F(    
-  " <tr>"
-  "  <td>SSID</td>");
-  html += F("<td><input type='text' id='wifiSSID' name='wifiSSID' value='");
-  html += String(m_config.getWifiSSID());
-  html += F("' size='30' maxlength='40' placeholder='SSID'></td>");
-  html += F("</tr><tr><td>Password</td>");
-  html += F("  <td><input type='password' id='wifiPSK' name='wifiPSK' value='");
-  html += String(m_config.getWifiPSK());
-  html += F("' size='30' maxlength='64' placeholder='Password'></td></tr>");
 
   html += F(
   " <tr>"
@@ -584,16 +575,6 @@ bool HSDWebserver::updateMainConfig(AsyncWebServerRequest *request)
     needSave |= m_config.setHost(request->arg(JSON_KEY_HOST).c_str());
   }
   
-  if (request->hasArg(JSON_KEY_WIFI_SSID))
-  {
-    needSave |= m_config.setWifiSSID(request->arg(JSON_KEY_WIFI_SSID).c_str());
-  }
-  
-  if (request->hasArg(JSON_KEY_WIFI_PSK)) 
-  {
-    needSave |= m_config.setWifiPSK(request->arg(JSON_KEY_WIFI_PSK).c_str());
-  }
-
   if (request->hasArg(JSON_KEY_GUI_USER))
   {
     needSave |= m_config.setGuiUser(request->arg(JSON_KEY_GUI_USER).c_str());

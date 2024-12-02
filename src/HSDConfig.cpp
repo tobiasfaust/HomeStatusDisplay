@@ -14,6 +14,7 @@ m_deviceMappingConfigFile(String("/devicemapping.json"))
 {  
   // reset non-configurable members
   setHost("");
+  this->version = (String(Release) + "@" + String(GIT_BRANCH));
 
   // reset configurable members
   resetMainConfigData();
@@ -46,8 +47,6 @@ void HSDConfig::resetMainConfigData()
 {
   Serial.println(F("Deleting main config data."));
     
-  setWifiSSID("");
-  setWifiPSK("");
   setGuiUser("admin");
   setGuiPass("admin");
   setMqttServer("");
@@ -97,8 +96,6 @@ bool HSDConfig::readMainConfigFile()
       Serial.println(F(""));
 
       if(json.containsKey(JSON_KEY_HOST) && 
-         json.containsKey(JSON_KEY_WIFI_SSID) && 
-         json.containsKey(JSON_KEY_WIFI_PSK) && 
          json.containsKey(JSON_KEY_GUI_USER) && 
          json.containsKey(JSON_KEY_GUI_PASS) && 
          json.containsKey(JSON_KEY_MQTT_SERVER) && 
@@ -113,8 +110,6 @@ bool HSDConfig::readMainConfigFile()
         Serial.println(F("Config data is complete."));
 
         setHost(json[JSON_KEY_HOST]);
-        setWifiSSID(json[JSON_KEY_WIFI_SSID]);
-        setWifiPSK(json[JSON_KEY_WIFI_PSK]);
         setGuiUser(json[JSON_KEY_GUI_USER]);
         setGuiPass(json[JSON_KEY_GUI_PASS]);
         setMqttServer(json[JSON_KEY_MQTT_SERVER]);
@@ -147,9 +142,8 @@ bool HSDConfig::readMainConfigFile()
 
 void HSDConfig::printMainConfigFile(JsonObject& json)
 {
+  Serial.print  (F("  • version         : ")); Serial.println(getVersion());
   Serial.print  (F("  • host            : ")); Serial.println((const char*)(json[JSON_KEY_HOST]));
-  Serial.print  (F("  • wifiSSID        : ")); Serial.println((const char*)(json[JSON_KEY_WIFI_SSID]));
-  Serial.println(F("  • wifiPSK         : not shown"));
   Serial.print  (F("  • guiUser         : ")); Serial.println((const char*)(json[JSON_KEY_GUI_USER]));
   Serial.println(F("  • guiPass         : not shown"));
   Serial.print  (F("  • mqttServer      : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_SERVER]));
@@ -280,8 +274,6 @@ void HSDConfig::writeMainConfigFile()
   JsonObject& json = jsonBuffer.createObject();
 
   json[JSON_KEY_HOST] = m_cfgHost;
-  json[JSON_KEY_WIFI_SSID] = m_cfgWifiSSID;
-  json[JSON_KEY_WIFI_PSK] = m_cfgWifiPSK;
   json[JSON_KEY_GUI_USER] = m_cfgGuiUser;
   json[JSON_KEY_GUI_PASS] = m_cfgGuiPass;
   json[JSON_KEY_MQTT_SERVER] = m_cfgMqttServer;
@@ -535,31 +527,7 @@ bool HSDConfig::setHost(const char* host)
 
 const char* HSDConfig::getVersion() const
 {
-  return Release;
-}
-
-const char* HSDConfig::getWifiSSID() const
-{
-  return m_cfgWifiSSID;
-}
-
-bool HSDConfig::setWifiSSID(const char* ssid)
-{
-  strncpy(m_cfgWifiSSID, ssid, MAX_WIFI_SSID_LEN);
-  m_cfgWifiSSID[MAX_WIFI_SSID_LEN] = '\0';
-  return true;
-}
-
-const char* HSDConfig::getWifiPSK() const
-{
-  return m_cfgWifiPSK;
-}
-
-bool HSDConfig::setWifiPSK(const char* psk)
-{
-  strncpy(m_cfgWifiPSK, psk, MAX_WIFI_PSK_LEN);
-  m_cfgWifiPSK[MAX_WIFI_PSK_LEN] = '\0';
-  return true;
+  return this->version.c_str();
 }
 
 const char* HSDConfig::getGuiUser() const

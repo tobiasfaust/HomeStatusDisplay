@@ -1,7 +1,8 @@
 #pragma once
 
 #include "HSDConfig.h"
-#include "HSDWifi.h"
+//#include "HSDWifi.h"
+#include <ImprovWiFiLibrary.h>
 #include "HSDWebserver.h"
 #include "HSDLeds.h"
 #include "HSDMqtt.h"
@@ -22,6 +23,8 @@ private:
   static const int MQTT_MSG_MAX_LEN = 50;
   
   void mqttCallback(char* topic, byte* payload, unsigned int length);
+  void onImprovWiFiConnectedCb(const char *ssid, const char *password);
+  void onImprovWiFiErrorCb(ImprovTypes::Error err);
 
   bool isStatusTopic(String& topic);
   HSDConfig::deviceType getDeviceType(String& statusTopic);
@@ -35,7 +38,7 @@ private:
   char mqttMsgBuffer[MQTT_MSG_MAX_LEN + 1];
   
   HSDConfig m_config;
-  HSDWifi m_wifi;
+  ImprovWiFi improvSerial;
   HSDWebserver m_webServer;
   HSDMqtt m_mqttHandler;
   HSDLeds m_leds;

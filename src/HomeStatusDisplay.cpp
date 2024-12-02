@@ -1,8 +1,5 @@
 #include "HomeStatusDisplay.h"
 
-// function declarations
-void handleMqttMessage(String topic, String msg);
-
 #define WINDOW_STRING (F("/window/"))
 #define DOOR_STRING (F("/door/"))
 #define LIGHT_STRING (F("/light/"))
@@ -10,18 +7,15 @@ void handleMqttMessage(String topic, String msg);
 
 #define ONE_MINUTE_MILLIS (60000)
 
-int getFreeRamSize();
-
-HomeStatusDisplay::HomeStatusDisplay()
-:
-m_wifi(m_config),
-m_webServer(m_config, m_leds, m_mqttHandler),
-m_mqttHandler(m_config, std::bind(&HomeStatusDisplay::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
-m_leds(m_config),
-m_lastWifiConnectionState(false),
-m_lastMqttConnectionState(false),
-m_oneMinuteTimerLast(0),
-m_uptime(0)
+HomeStatusDisplay::HomeStatusDisplay():
+  improvSerial(&Serial),
+  m_webServer(m_config, m_leds, m_mqttHandler),
+  m_mqttHandler(m_config, std::bind(&HomeStatusDisplay::mqttCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+  m_leds(m_config),
+  m_lastWifiConnectionState(false),
+  m_lastMqttConnectionState(false),
+  m_oneMinuteTimerLast(0),
+  m_uptime(0)
 {
 }
 
@@ -32,12 +26,46 @@ void HomeStatusDisplay::begin(const char* identifier)
   Serial.println(F(""));
 
   m_config.begin(identifier);
-  m_wifi.begin();
   m_webServer.begin();
   m_leds.begin();
   m_mqttHandler.begin(); 
 
-  Serial.print(F("Free RAM: ")); Serial.println(ESP.getFreeHeap());
+  ImprovTypes::ChipFamily variant = ImprovTypes::ChipFamily::CF_ESP32;
+  if (ARDUINO_VARIANT == "esp32s3") {
+      variant = ImprovTypes::ChipFamily::CF_ESP32_S3;
+  } else if (ARDUINO_VARIANT == "esp32c3") {
+      variant = ImprovTypes::ChipFamily::CF_ESP32_C3;
+  } else if (ARDUINO_VARIANT == "esp32s2") {
+      variant = ImprovTypes::ChipFamily::CF_ESP32_S2;
+  } else if (ARDUINO_VARIANT == "esp8266") {
+      variant = ImprovTypes::ChipFamily::CF_ESP8266;
+  } else {
+      variant = ImprovTypes::ChipFamily::CF_ESP32;
+  }
+
+  improvSerial.setDeviceInfo(variant, identifier, m_config.getVersion(), m_config.getHost());
+  improvSerial.onImprovError(std::bind(&HomeStatusDisplay::onImprovWiFiErrorCb, this, std::placeholders::_1));
+  improvSerial.onImprovConnected(std::bind(&HomeStatusDisplay::onImprovWiFiConnectedCb, this, std::placeholders::_1, std::placeholders::_2));
+  improvSerial.ConnectToWifi(true);
+
+  Serial.printf("Free RAM: %d\n", ESP.getFreeHeap());
+  Serial.println(ARDUINO_BOARD);
+}
+
+void HomeStatusDisplay::onImprovWiFiConnectedCb(const char *ssid, const char *password)
+{
+  // Save ssid and password here
+  m_webServer.startWebServer();
+}
+
+void HomeStatusDisplay::onImprovWiFiErrorCb(ImprovTypes::Error err)
+{
+  m_webServer.stopWebServer();
+  
+  if(err == ImprovTypes::Error::ERROR_WIFI_CONNECT_GIVEUP) {
+    Serial.println("Giving up on connecting to WiFi, restart the device");
+    ESP.restart();
+  }
 }
 
 void HomeStatusDisplay::work()
@@ -46,11 +74,10 @@ void HomeStatusDisplay::work()
     
   checkConnections();
 
-  m_wifi.handleConnection(false);
+  improvSerial.loop();
   m_webServer.handleClient(uptime);
 
-  if(m_wifi.connected())
-  {
+  if(improvSerial.isConnected()) {
     m_mqttHandler.handle();
   }
   
@@ -197,12 +224,12 @@ void HomeStatusDisplay::checkConnections()
     m_lastMqttConnectionState = false;
   }
 
-  if(!m_mqttHandler.connected() && m_wifi.connected())
+  if(!m_mqttHandler.connected() && improvSerial.isConnected())
   {
     m_leds.setAll(HSDConfig::ON, HSDConfig::YELLOW);
   }
   
-  if(!m_lastWifiConnectionState && m_wifi.connected())
+  if(!m_lastWifiConnectionState && improvSerial.isConnected())
   {
     m_leds.clear();
 
@@ -213,13 +240,13 @@ void HomeStatusDisplay::checkConnections()
     
     m_lastWifiConnectionState = true;
   }
-  else if(m_lastWifiConnectionState && !m_wifi.connected())
+  else if(m_lastWifiConnectionState && !improvSerial.isConnected())
   {
     m_leds.clear();
     m_lastWifiConnectionState = false;
   }
 
-  if(!m_wifi.connected())
+  if(!improvSerial.isConnected())
   {
     m_leds.setAll(HSDConfig::ON, HSDConfig::RED);
   }

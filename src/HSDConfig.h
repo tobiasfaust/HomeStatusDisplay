@@ -11,8 +11,6 @@
 #endif
 
 #define JSON_KEY_HOST                  (F("host"))
-#define JSON_KEY_WIFI_SSID             (F("wifiSSID"))
-#define JSON_KEY_WIFI_PSK              (F("wifiPSK"))
 #define JSON_KEY_GUI_USER              (F("guiUser"))
 #define JSON_KEY_GUI_PASS              (F("guiPass"))
 #define JSON_KEY_MQTT_SERVER           (F("mqttServer"))
@@ -151,15 +149,10 @@ public:
   void updateDeviceMapping();
 
   const char* getVersion() const;
-  
+  String version;
+
   const char* getHost() const;
   bool setHost(const char* host);
-
-  const char* getWifiSSID() const;
-  bool setWifiSSID(const char* ssid);
-
-  const char* getWifiPSK() const;
-  bool setWifiPSK(const char* psk);
 
   const char* getGuiUser() const;
   bool setGuiUser(const char* guiuser);
@@ -274,8 +267,6 @@ private:
   void onFileWriteError();
 
   static const int MAX_HOST_LEN              = 30;
-  static const int MAX_WIFI_SSID_LEN         = 30;
-  static const int MAX_WIFI_PSK_LEN          = 64;
   static const int MAX_GUI_USER_LEN          = 50;
   static const int MAX_GUI_PASS_LEN          = 50;
   static const int MAX_MQTT_SERVER_LEN       = 50;
@@ -317,8 +308,6 @@ private:
   bool m_cfgDeviceMappingDirty;
   
   char m_cfgHost[MAX_HOST_LEN + 1];
-  char m_cfgWifiSSID[MAX_WIFI_SSID_LEN + 1];
-  char m_cfgWifiPSK[MAX_WIFI_PSK_LEN + 1];
   char m_cfgGuiUser[MAX_GUI_USER_LEN + 1];
   char m_cfgGuiPass[MAX_GUI_PASS_LEN + 1];
   char m_cfgMqttServer[MAX_MQTT_SERVER_LEN + 1];
