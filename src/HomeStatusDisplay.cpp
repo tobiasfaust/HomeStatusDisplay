@@ -30,14 +30,21 @@ void HomeStatusDisplay::begin(const char* identifier)
   m_leds.begin();
   m_mqttHandler.begin(); 
 
-  ImprovTypes::ChipFamily variant = ImprovTypes::ChipFamily::CF_ESP32;
-  if (ARDUINO_VARIANT == "esp32s3") {
+  ImprovTypes::ChipFamily variant;
+  
+  #ifdef ESP32
+    String variantString = ARDUINO_VARIANT;
+  #else
+    String variantString = "esp8266";
+  #endif
+
+  if (variantString == "esp32s3") {
       variant = ImprovTypes::ChipFamily::CF_ESP32_S3;
-  } else if (ARDUINO_VARIANT == "esp32c3") {
+  } else if (variantString == "esp32c3") {
       variant = ImprovTypes::ChipFamily::CF_ESP32_C3;
-  } else if (ARDUINO_VARIANT == "esp32s2") {
+  } else if (variantString == "esp32s2") {
       variant = ImprovTypes::ChipFamily::CF_ESP32_S2;
-  } else if (ARDUINO_VARIANT == "esp8266") {
+  } else if (variantString == "esp8266") {
       variant = ImprovTypes::ChipFamily::CF_ESP8266;
   } else {
       variant = ImprovTypes::ChipFamily::CF_ESP32;
