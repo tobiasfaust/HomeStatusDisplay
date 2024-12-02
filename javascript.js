@@ -72,7 +72,6 @@ function getRepositoryName() {
 /**
  * Checks if the web install button has the 'install-unsupported' attribute.
  * If the attribute is present, it calls the `unsupported` function.
- * Otherwise, it calls the `setManifest` function.
  */
 function checkSupported() {
     if (document.getElementById('web-install-button').hasAttribute('install-unsupported')) unsupported();
@@ -154,6 +153,7 @@ function resetCheckboxes() {
     } else {
         document.getElementById('versions').addEventListener('change', setManifest);
         document.getElementById('web-install-div').classList.remove('disabled');
+        setManifest();
         console.log('Only one variant found. Skipping radio buttons.');
     }
 } 
