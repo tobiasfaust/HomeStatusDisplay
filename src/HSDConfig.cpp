@@ -46,10 +46,10 @@ void HSDConfig::begin(const char* defaultIdentifier)
 void HSDConfig::resetMainConfigData()
 {
   Serial.println(F("Deleting main config data."));
-    
+  
   setGuiUser("admin");
   setGuiPass("admin");
-  setMqttServer("");
+  setMqttServer("test.mosquitto.org");
   setMqttServerAuthUser("");
   setMqttServerAuthPass("");
   setMqttStatusTopic("");
