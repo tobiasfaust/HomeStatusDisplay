@@ -272,6 +272,7 @@ function setManifest() {
     if (manifestPath) {
         document.getElementById('web-install-button').setAttribute('manifest', manifestPath);
         document.getElementById('web-install-div').classList.remove('disabled');
+        console.log('use Manifest: ', manifestPath);
     } else {
         console.error('Manifest not found for the selected build and variant.');
     }
