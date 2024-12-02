@@ -209,6 +209,16 @@ function GenerateSelectList(versions, releases) {
         }
     }
 
+    // store the highest build number
+    let highestBuild = 0;
+    for (const stage in stages) {
+        for (const build in stages[stage]) {
+            if (build > highestBuild) {
+                highestBuild = build;
+            }
+        }
+    }
+
     // Create optgroups and options
     for (const stage in stages) {
         const optgroup = document.createElement('optgroup');
@@ -219,6 +229,7 @@ function GenerateSelectList(versions, releases) {
             const option = document.createElement('option');
             option.value = uniqueBuild.build;
             option.text = uniqueBuild.version + " (Build " + uniqueBuild.build + ")";
+            option.selected = uniqueBuild.build == highestBuild;
             optgroup.appendChild(option);
         }
         select.appendChild(optgroup);
