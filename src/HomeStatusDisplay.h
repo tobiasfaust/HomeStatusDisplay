@@ -1,7 +1,6 @@
 #pragma once
 
 #include "HSDConfig.h"
-//#include "HSDWifi.h"
 #include <ImprovWiFiLibrary.h>
 #include "HSDWebserver.h"
 #include "HSDLeds.h"

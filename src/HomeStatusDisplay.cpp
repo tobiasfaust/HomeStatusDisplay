@@ -56,7 +56,6 @@ void HomeStatusDisplay::begin(const char* identifier)
   improvSerial.ConnectToWifi(true);
 
   Serial.printf("Free RAM: %d\n", ESP.getFreeHeap());
-  Serial.println(ARDUINO_BOARD);
 }
 
 void HomeStatusDisplay::onImprovWiFiConnectedCb(const char *ssid, const char *password)
