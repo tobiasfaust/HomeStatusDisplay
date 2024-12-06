@@ -21,13 +21,6 @@
         "build": 12
     },
     {
-        "path": "firmware/v0.7-6-development/manifestAll-standard.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
-        "build": 6
-    },
-    {
         "path": "firmware/v0.7-8-development/manifestAll-standard.json",
         "version": "v0.7",
         "stage": "development",
@@ -40,5 +33,12 @@
         "stage": "development",
         "variant": "standard",
         "build": 10
+    },
+    {
+        "path": "firmware/v0.7-14-development/manifestAll-standard.json",
+        "version": "v0.7",
+        "stage": "development",
+        "variant": "standard",
+        "build": 14
     }
 ]
