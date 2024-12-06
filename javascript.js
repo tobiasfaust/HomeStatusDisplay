@@ -92,6 +92,26 @@ function unsupported() {
     </a>`
 }
 
+/**
+ * Returns a set of available variants for a given version number.
+ */
+function getAvailableVariants(versionNumber) {
+    let variants = new Set();
+    versions.forEach(version => {
+        if ((!versionNumber || version.build == versionNumber) && version.variant) {
+            variants.add(version.variant);
+        }
+    });
+
+    releases.forEach(release => {
+        if ((!versionNumber ||  release.build == versionNumber) && release.variant) {
+            variants.add(release.variant);
+        }
+    });
+
+    return variants;
+
+}
 
 /**
  * Resets all radio buttons on the page accordently selected version.
@@ -113,20 +133,7 @@ function resetCheckboxes(onClickEvent) {
     const radioButtonsContainer = document.getElementById('variants');
     radioButtonsContainer.innerHTML = ''; // Clear existing radio buttons
 
-    const variants = new Set();
-
-    // Collect all unique variants from versions and releases
-    versions.forEach(version => {
-        if (version.variant) {
-            variants.add(version.variant);
-        }
-    });
-
-    releases.forEach(release => {
-        if (release.variant) {
-            variants.add(release.variant);
-        }
-    });
+    const variants = getAvailableVariants(document.getElementById('versions').value);
 
     // Create radio buttons for each variant if > 1
     if (variants.size > 1) {
