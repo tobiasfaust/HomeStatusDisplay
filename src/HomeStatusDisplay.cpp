@@ -30,27 +30,7 @@ void HomeStatusDisplay::begin(const char* identifier)
   m_leds.begin();
   m_mqttHandler.begin(); 
 
-  ImprovTypes::ChipFamily variant;
-  
-  #ifdef ESP32
-    String variantString = ARDUINO_VARIANT;
-  #else
-    String variantString = "esp8266";
-  #endif
-
-  if (variantString == "esp32s3") {
-      variant = ImprovTypes::ChipFamily::CF_ESP32_S3;
-  } else if (variantString == "esp32c3") {
-      variant = ImprovTypes::ChipFamily::CF_ESP32_C3;
-  } else if (variantString == "esp32s2") {
-      variant = ImprovTypes::ChipFamily::CF_ESP32_S2;
-  } else if (variantString == "esp8266") {
-      variant = ImprovTypes::ChipFamily::CF_ESP8266;
-  } else {
-      variant = ImprovTypes::ChipFamily::CF_ESP32;
-  }
-
-  improvSerial.setDeviceInfo(variant, identifier, m_config.getVersion(), m_config.getHost());
+  improvSerial.setDeviceInfo(m_config.getChipFamily(), identifier, m_config.getVersion(), m_config.getHost());
   improvSerial.onImprovError(std::bind(&HomeStatusDisplay::onImprovWiFiErrorCb, this, std::placeholders::_1));
   improvSerial.onImprovConnected(std::bind(&HomeStatusDisplay::onImprovWiFiConnectedCb, this, std::placeholders::_1, std::placeholders::_2));
   improvSerial.ConnectToWifi(true);

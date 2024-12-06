@@ -41,6 +41,30 @@ void HSDConfig::begin(const char* defaultIdentifier)
   {
     Serial.println(F("Failed to mount file system"));
   }
+  
+  // determine chip family
+  #ifdef ESP32
+    String variantString = ARDUINO_VARIANT;
+  #else
+    String variantString = "esp8266";
+  #endif
+
+  if (variantString == "esp32s3") {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP32_S3;
+      this->ChipFamilyStr = "ESP32-S3";
+  } else if (variantString == "esp32c3") {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP32_C3;
+      this->ChipFamilyStr = "ESP32-C3";
+  } else if (variantString == "esp32s2") {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP32_S2;
+      this->ChipFamilyStr = "ESP32-S2";
+  } else if (variantString == "esp8266") {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP8266;
+      this->ChipFamilyStr = "ESP8266";
+  } else {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP32;
+      this->ChipFamilyStr = "ESP32";
+  }
 }
 
 void HSDConfig::resetMainConfigData()
