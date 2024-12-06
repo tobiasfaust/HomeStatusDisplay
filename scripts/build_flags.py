@@ -25,5 +25,3 @@ def withDataDir():
 
 if __name__ == '__main__':
     globals()[sys.argv[1]]()
-
-    
