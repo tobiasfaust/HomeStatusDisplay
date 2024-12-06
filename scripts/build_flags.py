@@ -16,12 +16,6 @@ def git_owner():
     owner = re.search(r'github.com[:/](.*)/', output.decode()).group(1)
     print('-D GIT_OWNER=\\"%s\\"' % owner);
 
-def withDataDir():
-    # check if ../datadir exists
-    if os.path.isdir('../data'):
-        print('-D WITH_FS=1');
-    else:
-        print('-D WITH_FS=0');
 
 if __name__ == '__main__':
     globals()[sys.argv[1]]()

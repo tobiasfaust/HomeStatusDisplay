@@ -65,7 +65,6 @@ void HSDWebserver::getDeviceInfo(AsyncWebServerRequest *request) {
   String jsonString = "{\"owner\":\"" + String(GIT_OWNER) + 
                     "\",\"repository\":\"" + String(GIT_REPO) + 
                     "\",\"chipfamily\":\"" + m_config.getChipFamilyStr() + 
-                    "\",\"withFS\":\"" + String(WITH_FS).toInt() +
                     "\"}";
   response->setContentLength(jsonString.length());
   response->print(jsonString);
