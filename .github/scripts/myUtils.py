@@ -333,3 +333,41 @@ def changeURL(root: str, url: str) -> None:
                 logging.warning(f"Warnung: Fehler beim Parsen der JSON-Datei {manifest_path}.")
             except Exception as e:
                 logging.error(f"Fehler beim Verarbeiten der Datei {manifest_path}: {e}")
+
+def readOffsetFromPartitionCSV(path: str, name: str) -> int:
+    """
+    Reads a CSV file and calculates the offset for a given name.
+    This function reads the specified CSV file with a delimiter of ','.
+    It fills in the Offset column if it is empty by adding the previous offset
+    and the value from the Size column of the previous row. It returns the calculated
+    offset from the row where the value in the first column matches the given name as a hexadecimal number.
+    If the file does not exist or cannot be read, it returns None.
+    
+    <b>Args:</b>
+        path (str): The path to the CSV file.
+        name (str): The name to search for in the first column.
+
+    <b>Returns:</b>
+        int: The calculated offset as a hexadecimal number, or None if the file cannot be read.
+    """
+
+    try:
+        with open(path, 'r') as file:
+            lines = file.readlines()
+            headers = lines[0].strip().split(',')
+            name_index = 0
+            offset_index = 3
+            size_index = 4
+
+            previous_offset = 0
+            previous_size = 0
+            for line in lines[1:]:
+                columns = line.strip().split(',')
+                if columns[offset_index].strip() == '':
+                    columns[offset_index] = str(previous_offset + previous_size)
+                previous_size = int(columns[size_index], 0)
+                previous_offset = int(columns[offset_index], 0)
+                if columns[name_index] == name:
+                    return hex(previous_offset)
+    except (FileNotFoundError, IndexError, ValueError):
+        return None

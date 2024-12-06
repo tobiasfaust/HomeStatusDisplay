@@ -81,7 +81,7 @@ for root, _, files in os.walk(args.binarypath):
             save_results_to_json(json_data, os.path.join(args.releasepath, f"{FILENAME}.{FileExtension}.json"))   
             shutil.copyfile(os.path.join(root, file), os.path.join(args.releasepath, f'{FILENAME}.{FileExtension}.{FILEEXT}'))
             
-            ################ Create Manifest ##################
+            ################ Create Manifest.json and Files.json ##################
             manifest_data = {
                 "name": f"{args.repository} (v{VERSION}-{args.stage})",
                 "chipFamily": args.arch,
@@ -91,6 +91,8 @@ for root, _, files in os.walk(args.binarypath):
                 "version": f"v{VERSION}",
                 "parts": []
             }
+
+            files_data = json.loads(json.dumps(manifest_data))
 
             SubDir = f'v{VERSION}-{args.build}-{args.stage}'
 
@@ -106,34 +108,46 @@ for root, _, files in os.walk(args.binarypath):
                     "offset": 0
                 })
 
-#            if os.path.isfile(os.path.join(args.binarypath, "bootloader.bin")):
-#                manifest_data["parts"].append({
-#                    "path": f"https://tobiasfaust.github.io/test/firmware/{SubDir}/{FIRMWARENAME}/bootloader.{FileExtension}.bin",
-#                    "offset": 0
-#                })
-#            if os.path.isfile(os.path.join(args.binarypath, "partitions.bin")):
-#                manifest_data["parts"].append({
-#                    "path": f"https://tobiasfaust.github.io/test/firmware/{SubDir}/{FIRMWARENAME}/partitions.{FileExtension}.bin",
-#                    "offset": 32768
-#                })
-#            if os.path.isfile(os.path.join(args.binarypath, "littlefs.bin")):
-#                manifest_data["parts"].append({
-#                    "path": f"https://tobiasfaust.github.io/test/firmware/{SubDir}/{FIRMWARENAME}/littlefs.{FileExtension}.bin",
-#                    "offset": 3473408
-#                })
-#
-#            OFFSET = 0 if "ESP8266" in args.arch else 65536
-#            manifest_data["parts"].append({
-#                "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/{SubDir}/{FIRMWARENAME}/{FILENAME}.{FileExtension}.{FILEEXT}",
-#                "offset": OFFSET
-#            })
+            # process files.json
+            if os.path.isfile(os.path.join(args.binarypath, "bootloader.bin")):
+                files_data["parts"].append({
+                    "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/{SubDir}/{FIRMWARENAME}/bootloader.{FileExtension}.bin",
+                    "offset": 4096,
+                    "filetype": "bootloader"
+                })
+            if os.path.isfile(os.path.join(args.binarypath, "partitions.bin")):
+                files_data["parts"].append({
+                    "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/{SubDir}/{FIRMWARENAME}/partitions.{FileExtension}.bin",
+                    "offset": 32768,
+                    "filetype": "partitions"
+                })
+            if os.path.isfile(os.path.join(args.binarypath, "littlefs.bin")):
+                files_data["parts"].append({
+                    "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/{SubDir}/{FIRMWARENAME}/littlefs.{FileExtension}.bin",
+                    "offset": int(readOffsetFromPartitionCSV("partitions.csv", "spiffs"), 16),
+                    "filetype": "filesystem"
+                })
+
+
+            OFFSET = 0 if "ESP8266" in args.arch else int(readOffsetFromPartitionCSV("partitions.csv", "app0"), 16)
+            files_data["parts"].append({
+                "path": f"https://tobiasfaust.github.io/{args.repository}/firmware/{SubDir}/{FIRMWARENAME}/{FILENAME}.{FileExtension}.{FILEEXT}",
+                "offset": OFFSET,
+                "filetype": "firmware"
+            })
 
             if args.debug:
                 logging.info(f"\n\nEcho Manifest string")
                 logging.info(json.dumps(manifest_data, indent=2))
 
+                logging.info(f"\n\nEcho Files string")
+                logging.info(json.dumps(files_data, indent=2))
+
             save_results_to_json(manifest_data, os.path.join(args.releasepath, "manifest.json"))
             save_results_to_json(manifest_data, os.path.join(args.artifactpath, "manifest.json"))
+
+            save_results_to_json(files_data, os.path.join(args.releasepath, "files.json"))
+            save_results_to_json(files_data, os.path.join(args.artifactpath, "files.json"))
 
 # process the rest of binaries into ARTIFACTPATH
 for root, _, files in os.walk(args.binarypath):
