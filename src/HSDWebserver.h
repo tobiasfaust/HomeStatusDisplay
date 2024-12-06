@@ -8,6 +8,7 @@
 #include "HSDMqtt.h"
 #include "HSDHtmlHelper.h"
 #include <ElegantOTA.h>
+#include <elegant_html.h>
 
 #ifdef ESP8266
   #define ESP_getChipId() ESP.getChipId() 
@@ -36,6 +37,8 @@ private:
   void deliverColorMappingPage(AsyncWebServerRequest *request);
   void deliverDeviceMappingPage(AsyncWebServerRequest *request);
   void deliverNotFoundPage(AsyncWebServerRequest *request);
+  void deliverUpdatePage(AsyncWebServerRequest *request);
+  void getDeviceInfo(AsyncWebServerRequest *request);
 
   void checkReboot(AsyncWebServerRequest *request);
 
@@ -53,7 +56,7 @@ private:
   bool addDeviceMappingEntry(AsyncWebServerRequest *request);
   bool deleteDeviceMappingEntry(AsyncWebServerRequest *request);
   
-  bool updateDeviceMappingConfig(AsyncWebServerRequest *request);
+  //bool updateDeviceMappingConfig(AsyncWebServerRequest *request);
 
   AsyncWebServer m_server;
   

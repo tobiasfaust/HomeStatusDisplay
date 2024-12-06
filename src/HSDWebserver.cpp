@@ -29,6 +29,10 @@ void HSDWebserver::begin()
   //ElegantOTA.onProgress(onOTAProgress);
   //ElegantOTA.onEnd(onOTAEnd);
 
+  // overwrite standard website of Elegant-Ota, use custom site
+  m_server.on("/updateota", HTTP_GET, std::bind(&HSDWebserver::deliverUpdatePage, this, std::placeholders::_1));
+  m_server.on("/getdeviceinfo", HTTP_GET, std::bind(&HSDWebserver::getDeviceInfo, this, std::placeholders::_1));
+
   //m_server.begin(); // handled via ImprovWifiLibrary Callback
 }
 
@@ -44,6 +48,39 @@ void HSDWebserver::handleClient(unsigned long deviceUptime)
 {
   m_deviceUptimeMinutes = deviceUptime;
   ElegantOTA.loop();
+}
+
+void HSDWebserver::getDeviceInfo(AsyncWebServerRequest *request) {
+  Serial.println(F("Delivering update page."));
+  if( strlen( m_config.getGuiUser() ) != 0 ) {
+    if( !request->authenticate( m_config.getGuiUser(), m_config.getGuiPass() ) )
+      return request->requestAuthentication();
+  }
+  
+  AsyncResponseStream *response = request->beginResponseStream("application/json");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "-1");
+
+  String jsonString = "{\"owner\":\"" + String(GIT_OWNER) + 
+                    "\",\"repository\":\"" + String(GIT_REPO) + 
+                    "\",\"chipfamily\":\"" + m_config.getChipFamilyStr() + 
+                    "\"}";
+  response->setContentLength(jsonString.length());
+  response->print(jsonString);
+  request->send(response);
+}
+
+void HSDWebserver::deliverUpdatePage(AsyncWebServerRequest *request) {
+  Serial.println(F("Delivering update page."));
+  if( strlen( m_config.getGuiUser() ) != 0 ) {
+    if( !request->authenticate( m_config.getGuiUser(), m_config.getGuiPass() ) )
+      return request->requestAuthentication();
+  }
+  
+  AsyncWebServerResponse *response = request->beginResponse(200, "text/html", ELEGANT_OTA_HTML, ELEGANT_OTA_HTML_len);
+  response->addHeader("Content-Encoding", "gzip");
+  request->send(response);
 }
 
 void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {

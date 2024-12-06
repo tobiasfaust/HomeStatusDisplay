@@ -6,10 +6,10 @@ Release 0.7:
   - change max configurable LED mapping entries for ESP32 to 100
   - change max configurable Color mapping entries for ESP32 to 50
   - use ElegantOta to achieve ESP32 compatibility
-  - add ESP-Reboot after 5 minutes running Access Point
-  - add Gitpod integration
+  - add Gitpod integration for a custom compiling
   - increase MQTT address length to 50 characters (thanks to JudgeDredd@fhem)
   - add MQTT authentication (thanks to JudgeDredd@fhem)
   - optionally secure WebUI-Config with username/password (thanks to JudgeDredd@fhem)
-  - add WebInstaller
-  - change custom wifi handling to ImprovWiFiLibrary
+  - add WebInstaller, remove initial Accesspoint handling
+  - change custom wifi handling to ImprovWiFiLibrary via web-installer
+  - add custom ElegantOta to select predefined binaries 

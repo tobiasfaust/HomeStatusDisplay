@@ -2,6 +2,7 @@
 
 #include "HSDConfigFile.h"
 #include "PreAllocatedLinkedList.h"
+#include <ImprovWiFiLibrary.h>
 #include <_Release.h>
 
 #ifdef ESP32
@@ -148,6 +149,9 @@ public:
   void saveDeviceMapping();
   void updateDeviceMapping();
 
+  const String& getChipFamilyStr() {return ChipFamilyStr;}
+  const ImprovTypes::ChipFamily& getChipFamily() {return ChipFamily;}
+
   const char* getVersion() const;
   String version;
 
@@ -265,6 +269,9 @@ private:
   void writeDeviceMappingConfigFile();
 
   void onFileWriteError();
+
+  ImprovTypes::ChipFamily ChipFamily;
+  String ChipFamilyStr;
 
   static const int MAX_HOST_LEN              = 30;
   static const int MAX_GUI_USER_LEN          = 50;
