@@ -1,5 +1,7 @@
 #include "HomeStatusDisplay.h"
 
+
+
 #define WINDOW_STRING (F("/window/"))
 #define DOOR_STRING (F("/door/"))
 #define LIGHT_STRING (F("/light/"))
