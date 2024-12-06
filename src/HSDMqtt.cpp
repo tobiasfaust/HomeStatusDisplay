@@ -25,12 +25,12 @@ void HSDMqtt::begin()
   if(mqttIpAddr.fromString(m_config.getMqttServer()))
   {
     // valid ip address entered 
-    m_pubSubClient.setServer(mqttIpAddr, 1883); 
+    m_pubSubClient.setServer(mqttIpAddr, m_config.getMqttServerPort()); 
   }
   else
   {
     // invalid ip address, try as hostname
-    m_pubSubClient.setServer(m_config.getMqttServer(), 1883);  
+    m_pubSubClient.setServer(m_config.getMqttServer(), m_config.getMqttServerPort());  
   }
 }
 
@@ -85,9 +85,7 @@ bool HSDMqtt::reconnect()
   String clientId = "ESP8266Client-";
   clientId += String(random(0xffff), HEX);
   
-  Serial.print(F("Connecting to MQTT broker "));
-  Serial.print(String(m_config.getMqttServer()));
-  Serial.print(" with client id " + clientId + "... ");
+  Serial.printf("Connecting to MQTT broker %s:%d with client id %s...\n", m_config.getMqttServer(), m_config.getMqttServerPort(), clientId.c_str());
 
   const char* willTopic = m_config.getMqttWillTopic();
   const char* mqttAuthUser = m_config.getMqttServerAuthUser();

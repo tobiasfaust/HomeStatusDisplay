@@ -74,6 +74,7 @@ void HSDConfig::resetMainConfigData()
   setGuiUser("admin");
   setGuiPass("admin");
   setMqttServer("test.mosquitto.org");
+  setMqttServerPort(1883);
   setMqttServerAuthUser("");
   setMqttServerAuthPass("");
   setMqttStatusTopic("");
@@ -137,6 +138,7 @@ bool HSDConfig::readMainConfigFile()
         setGuiUser(json[JSON_KEY_GUI_USER]);
         setGuiPass(json[JSON_KEY_GUI_PASS]);
         setMqttServer(json[JSON_KEY_MQTT_SERVER]);
+        setMqttServerPort(json[JSON_KEY_MQTT_SERVER_PORT]);
         setMqttServerAuthUser(json[JSON_KEY_MQTT_AUTHUSER]);
         setMqttServerAuthPass(json[JSON_KEY_MQTT_AUTHPASS]);
         setMqttStatusTopic(json[JSON_KEY_MQTT_STATUS_TOPIC]);
@@ -171,6 +173,7 @@ void HSDConfig::printMainConfigFile(JsonObject& json)
   Serial.print  (F("  • guiUser         : ")); Serial.println((const char*)(json[JSON_KEY_GUI_USER]));
   Serial.println(F("  • guiPass         : not shown"));
   Serial.print  (F("  • mqttServer      : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_SERVER]));
+  Serial.print  (F("  • mqttServerPort  : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_SERVER_PORT]));
   Serial.print  (F("  • mqttServerUser  : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_AUTHUSER]));
   Serial.println(F("  • mqttServerPass  : not shown"));
   Serial.print  (F("  • mqttStatusTopic : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_STATUS_TOPIC]));
@@ -301,6 +304,7 @@ void HSDConfig::writeMainConfigFile()
   json[JSON_KEY_GUI_USER] = m_cfgGuiUser;
   json[JSON_KEY_GUI_PASS] = m_cfgGuiPass;
   json[JSON_KEY_MQTT_SERVER] = m_cfgMqttServer;
+  json[JSON_KEY_MQTT_SERVER_PORT] = m_cfgMqttServerPort;
   json[JSON_KEY_MQTT_AUTHUSER] = m_cfgMqttServerAuthUser;
   json[JSON_KEY_MQTT_AUTHPASS] = m_cfgMqttServerAuthPass;
   json[JSON_KEY_MQTT_STATUS_TOPIC] = m_cfgMqttStatusTopic;
@@ -583,12 +587,23 @@ const char* HSDConfig::getMqttServer() const
   return m_cfgMqttServer;
 }
 
+uint16_t HSDConfig::getMqttServerPort() const
+{
+  return m_cfgMqttServerPort;
+} 
+
 bool HSDConfig::setMqttServer(const char* ip)
 {
   strncpy(m_cfgMqttServer, ip, MAX_MQTT_SERVER_LEN);
   m_cfgMqttServer[MAX_MQTT_SERVER_LEN] = '\0';
   return true;
 }
+
+bool HSDConfig::setMqttServerPort(uint16_t port)
+{
+  m_cfgMqttServerPort = port;
+  return true;
+} 
 
 const char* HSDConfig::getMqttServerAuthUser() const
 {

@@ -15,6 +15,7 @@
 #define JSON_KEY_GUI_USER              (F("guiUser"))
 #define JSON_KEY_GUI_PASS              (F("guiPass"))
 #define JSON_KEY_MQTT_SERVER           (F("mqttServer"))
+#define JSON_KEY_MQTT_SERVER_PORT      (F("mqttServerPort"))
 #define JSON_KEY_MQTT_AUTHUSER         (F("mqttServerAuthUser"))
 #define JSON_KEY_MQTT_AUTHPASS         (F("mqttServerAuthPass"))
 #define JSON_KEY_MQTT_STATUS_TOPIC     (F("mqttStatusTopic"))
@@ -166,6 +167,9 @@ public:
 
   const char* getMqttServer() const;
   bool setMqttServer(const char* ip);
+
+  uint16_t getMqttServerPort() const;
+  bool setMqttServerPort(uint16_t port);
 
   const char* getMqttServerAuthUser() const;
   bool setMqttServerAuthUser(const char* mqttauthuser);
@@ -324,6 +328,7 @@ private:
   char m_cfgMqttTestTopic[MAX_MQTT_TEST_TOPIC_LEN + 1];
   char m_cfgMqttWillTopic[MAX_MQTT_WILL_TOPIC_LEN + 1];
   
+  uint16_t m_cfgMqttServerPort;
   int m_cfgNumberOfLeds;
   int m_cfgLedDataPin;
   uint8_t m_cfgLedBrightness;

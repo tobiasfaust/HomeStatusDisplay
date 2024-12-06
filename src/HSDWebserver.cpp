@@ -138,6 +138,12 @@ void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
   "  <td>Server</td>"
   "  <td><input type='text' id='mqttServer' name='mqttServer' value='"); html += String(m_config.getMqttServer()); html += F("' size='30' maxlength='50' placeholder='IP or hostname'></td>"
   " </tr>"
+
+  " <tr>"
+  "  <td>Server</td>"
+  "  <td><input type='text' id='mqttServerPort' name='mqttServerPort' value='"); html += String(m_config.getMqttServerPort()); html += F("' size='30' maxlength='50' placeholder='MqttServer Port'></td>"
+  " </tr>"
+
   " <tr>"
   "  <td>Server Auth User</td>"
   "  <td><input type='text' id='mqttServerAuthUser' name='mqttServerAuthUser' value='"); html += String(m_config.getMqttServerAuthUser()); html += F("' size='30' maxlength='50' placeholder='Username'></td>"
@@ -625,6 +631,11 @@ bool HSDWebserver::updateMainConfig(AsyncWebServerRequest *request)
   if (request->hasArg(JSON_KEY_MQTT_SERVER))
   {
     needSave |= m_config.setMqttServer(request->arg(JSON_KEY_MQTT_SERVER).c_str());
+  }
+
+  if (request->hasArg(JSON_KEY_MQTT_SERVER_PORT))
+  {
+    needSave |= m_config.setMqttServerPort(request->arg(JSON_KEY_MQTT_SERVER_PORT).toInt());
   }
 
   if (request->hasArg(JSON_KEY_MQTT_AUTHUSER))
