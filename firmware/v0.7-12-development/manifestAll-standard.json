@@ -1,0 +1,54 @@
+{
+    "name": "HomeStatusDisplay (v0.7-development)",
+    "version": "v0.7",
+    "stage": "development",
+    "build": 12,
+    "variant": "standard",
+    "builds": [
+        {
+            "chipFamily": "ESP32-S2",
+            "parts": [
+                {
+                    "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-12-development/firmware_ESP32-S2/merged-firmware.ESP32-S2.v0.7-12.standard.development.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-S3",
+            "parts": [
+                {
+                    "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-12-development/firmware_ESP32-S3/merged-firmware.ESP32-S3.v0.7-12.standard.development.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-C3",
+            "parts": [
+                {
+                    "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-12-development/firmware_ESP32-C3/merged-firmware.ESP32-C3.v0.7-12.standard.development.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP8266",
+            "parts": [
+                {
+                    "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-12-development/firmware_ESP8266/firmware.ESP8266.v0.7-12.standard.development.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32",
+            "parts": [
+                {
+                    "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-12-development/firmware_ESP32/merged-firmware.ESP32.v0.7-12.standard.development.bin",
+                    "offset": 0
+                }
+            ]
+        }
+    ]
+}
