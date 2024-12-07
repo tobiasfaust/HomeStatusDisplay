@@ -50,7 +50,10 @@ void HomeStatusDisplay::onImprovWiFiErrorCb(ImprovTypes::Error err)
   
   if(err == ImprovTypes::Error::ERROR_WIFI_CONNECT_GIVEUP) {
     Serial.println("Giving up on connecting to WiFi, restart the device");
+    if (!m_config.getChipFamily()==4)
+    {
     ESP.restart();
+    };
   }
 }
 
