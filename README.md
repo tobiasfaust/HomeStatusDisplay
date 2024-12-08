@@ -24,7 +24,7 @@ Upon first usage, you should configure your Device at some configuration pages t
  - MQTT setup
  - LED setup
 
-Der intitiale user ist "admin" und als Passwort ist ebenfalls "admin" voreingestellt. Bitte auf der Seite "General" einen eigenen User und Passwort eintragen.
+Als intitialer user ist "admin" und als Passwort ist ebenfalls "admin" voreingestellt. Bitte auf der Seite "General" einen eigenen User und Passwort eintragen.
 
 You can find more detailed information in the tutorial on my website (it's in German, unfortunately...):
 http://www.bernd-schubart.de/homestatusdisplay-smart-home-status-immer-im-blick/
