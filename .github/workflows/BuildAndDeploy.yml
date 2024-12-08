@@ -7,6 +7,7 @@ name: Build&Deploy
 on:
   push:
     branches:
+      - stable
       - master
       - prelive
       - development
