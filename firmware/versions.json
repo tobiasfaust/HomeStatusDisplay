@@ -33,5 +33,12 @@
         "stage": "development",
         "variant": "standard",
         "build": 14
+    },
+    {
+        "path": "firmware/v0.7-18-development/manifestAll-standard.json",
+        "version": "v0.7",
+        "stage": "development",
+        "variant": "standard",
+        "build": 18
     }
 ]
