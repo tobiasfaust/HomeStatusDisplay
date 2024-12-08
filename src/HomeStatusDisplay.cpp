@@ -33,7 +33,7 @@ void HomeStatusDisplay::begin(const char* identifier)
   improvSerial.setDeviceInfo(m_config.getChipFamily(), identifier, m_config.getVersion(), m_config.getHost());
   improvSerial.onImprovError(std::bind(&HomeStatusDisplay::onImprovWiFiErrorCb, this, std::placeholders::_1));
   improvSerial.onImprovConnected(std::bind(&HomeStatusDisplay::onImprovWiFiConnectedCb, this, std::placeholders::_1, std::placeholders::_2));
-  improvSerial.ConnectToWifi(true);
+  improvSerial.ConnectToWifi();
 
   Serial.printf("Free RAM: %d\n", ESP.getFreeHeap());
 }
