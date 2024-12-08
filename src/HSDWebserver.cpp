@@ -140,7 +140,7 @@ void HSDWebserver::deliverRootPage(AsyncWebServerRequest *request) {
   " </tr>"
 
   " <tr>"
-  "  <td>Server</td>"
+  "  <td>Port</td>"
   "  <td><input type='text' id='mqttServerPort' name='mqttServerPort' value='"); html += String(m_config.getMqttServerPort()); html += F("' size='30' maxlength='50' placeholder='MqttServer Port'></td>"
   " </tr>"
 
