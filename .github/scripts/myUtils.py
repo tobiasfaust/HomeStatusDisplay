@@ -109,6 +109,7 @@ def process_manifests(root: str) -> None:
                             version = manifest_data.get('version')
                             stage = manifest_data.get('stage')
                             build = manifest_data.get('build')
+                            releasetag = manifest_data.get('releasetag', None)
                             
                             # Wenn die erforderlichen Felder vorhanden sind, erstelle die neue 'manifestAll.json' Datei
                             if name and version and stage:
@@ -120,6 +121,7 @@ def process_manifests(root: str) -> None:
                                     "stage": stage,
                                     "build": build, 
                                     "variant": variant,
+                                    "releasetag": releasetag if releasetag is not None else '',
                                     "builds": []  # Wir werden die "builds" später mit chipFamily und parts füllen
                                 }
 
@@ -178,6 +180,7 @@ def search_manifests_and_extract_version(root: str, keepPath: bool) -> list:
                         stage = manifest_data.get('stage', None)
                         build = manifest_data.get('build', None)
                         variant = manifest_data.get('variant', None)
+                        releasetag = manifest_data.get('releasetag', None) 
                         
                         # Extrahiere den ersten 'path' aus 'parts' falls vorhanden, 
                         # extrahiere daraus den Pfad
@@ -198,7 +201,8 @@ def search_manifests_and_extract_version(root: str, keepPath: bool) -> list:
                                 'version': version,
                                 'stage': stage,
                                 'variant': variant,
-                                'build': int(build) if build else 0
+                                'build': int(build) if build else 0,
+                                'releasetag': releasetag if releasetag is not None else ''
                             })
                 
                 except json.JSONDecodeError:
@@ -303,7 +307,7 @@ def deleteVersions(root: str, keepVersions: int, versions: list = None) -> None:
 #    ]
 #}
 
-def changeURL(root: str, url: str) -> None:
+def changeURL(root: str, url: str, TagName: str) -> None:
     """
     Ändert den URL-Pfad in allen 'manifest.json'-Dateien unterhalb des angegebenen Verzeichnisses 
     in allen 'path' Variablen im Array 'parts' zur angegebenen URL. Speichert die Änderungen in den Dateien.
@@ -321,6 +325,7 @@ def changeURL(root: str, url: str) -> None:
             try:
                 manifest_data = read_json_file(manifest_path)
                 if manifest_data is not None:
+                    manifest_data['releasetag'] = TagName # set the release tag
                     parts = manifest_data.get('parts', [])
                     for part in parts:
                         if 'path' in part:

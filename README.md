@@ -1,6 +1,13 @@
 # HomeStatusDisplay
 #### original code forked from https://github.com/MTJoker/HomeStatusDisplay
 
+![Build&Deploy](https://github.com/tobiasfaust/HomeStatusDisplay/actions/workflows/BuildAndDeploy.yml/badge.svg)
+[![license](https://img.shields.io/badge/Licence-GNU%20v3.0-green)](https://github.com/desktop/desktop/blob/master/LICENSE)
+![ESP32 Architecture](https://img.shields.io/badge/Architecture-ESP32-blue)
+![ESP8266 Architecture](https://img.shields.io/badge/Architecture-ESP8266-blue)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/tobiasfaust/HomeStatusDisplay?include_prereleases&style=plastic)
+![GitHub All Releases](https://img.shields.io/github/downloads/tobiasfaust/HomeStatusDisplay/total?style=plastic)
+
 **This fork refactures the original code and improved some technicals**
 
 Show status information sent via MQTT (e.g. from FHEM or any other MQTT-speaking system) using RGB LEDs.
