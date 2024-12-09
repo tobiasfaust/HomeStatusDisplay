@@ -31,5 +31,7 @@ Upon first usage, you should configure your Device at some configuration pages t
  - MQTT setup
  - LED setup
 
+## User is "admin" and password is also "admin". Please change this at the "General" site.
+
 You can find more detailed information in the tutorial on my website (it's in German, unfortunately...):
 http://www.bernd-schubart.de/homestatusdisplay-smart-home-status-immer-im-blick/
