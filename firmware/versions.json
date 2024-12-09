@@ -1,44 +1,50 @@
 [
     {
-        "path": "firmware/v0.7-13-development/manifestAll-standard.json",
+        "path": "firmware/v0.7-20-development/manifestAll-standard.json",
         "version": "v0.7",
         "stage": "development",
         "variant": "standard",
-        "build": 13
+        "build": 20,
+        "releasetag": ""
     },
     {
         "path": "firmware/v0.7-15-development/manifestAll-standard.json",
         "version": "v0.7",
         "stage": "development",
         "variant": "standard",
-        "build": 15
+        "build": 15,
+        "releasetag": ""
     },
     {
         "path": "firmware/v0.7-17-development/manifestAll-standard.json",
         "version": "v0.7",
         "stage": "development",
         "variant": "standard",
-        "build": 17
+        "build": 17,
+        "releasetag": ""
     },
     {
         "path": "firmware/v0.7-16-development/manifestAll-standard.json",
         "version": "v0.7",
         "stage": "development",
         "variant": "standard",
-        "build": 16
+        "build": 16,
+        "releasetag": ""
     },
     {
         "path": "firmware/v0.7-14-development/manifestAll-standard.json",
         "version": "v0.7",
         "stage": "development",
         "variant": "standard",
-        "build": 14
+        "build": 14,
+        "releasetag": ""
     },
     {
         "path": "firmware/v0.7-18-development/manifestAll-standard.json",
         "version": "v0.7",
         "stage": "development",
         "variant": "standard",
-        "build": 18
+        "build": 18,
+        "releasetag": ""
     }
 ]
