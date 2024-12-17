@@ -29,7 +29,7 @@ function init() {
     .then(([versions, releases]) => {
         window.versions = versions;
         window.releases = releases;
-        GenerateSelectList(true, true);
+        GenerateSelectList(versions, releases, true, true);
         checkSupported(); 
         resetCheckboxes(setManifest);
     })
@@ -93,18 +93,25 @@ function unsupported() {
 }
 
 /**
- * Returns a set of available variants for a given version number.
+ * Returns a set of available variants for a given version number and ChipFamily.
+ * 
+ * @param {array} versions - content of versions.json
+ * @param {array} releases - content of releases.json
+ * @param {string} versionNumber - the build number of the version/release
+ * @param {string} chipFamily - the current used chip family, empty string for all
+ * 
+ * @returns {Set} A set of available variants for the given version number and chip family.
  */
-function getAvailableVariants(versionNumber) {
+function getAvailableVariants(v, r, versionNumber, chipFamily = '') {
     let variants = new Set();
-    versions.forEach(version => {
-        if ((!versionNumber || version.build == versionNumber) && version.variant) {
+    v.forEach(version => {
+    if ((!versionNumber || version.build == versionNumber) && (chipFamily == '' || version.chipFamilies.includes(chipFamily)) && version.variant) {
             variants.add(version.variant);
         }
     });
 
-    releases.forEach(release => {
-        if ((!versionNumber ||  release.build == versionNumber) && release.variant) {
+    r.forEach(release => {
+        if ((!versionNumber ||  release.build == versionNumber) && (chipFamily == '' || release.chipFamilies.includes(chipFamily)) && release.variant) {
             variants.add(release.variant);
         }
     });
@@ -133,7 +140,7 @@ function resetCheckboxes(onClickEvent) {
     const radioButtonsContainer = document.getElementById('variants');
     radioButtonsContainer.innerHTML = ''; // Clear existing radio buttons
 
-    const variants = getAvailableVariants(document.getElementById('versions').value);
+    const variants = getAvailableVariants(versions, releases, document.getElementById('versions').value);
 
     // Create radio buttons for each variant if > 1
     if (variants.size > 1) {
@@ -173,6 +180,8 @@ function resetCheckboxes(onClickEvent) {
 /**
  * Generates a select list with grouped and sorted versions and releases.
  * 
+ * @param {array} versions - content of versions.json
+ * @param {array} releases - content of releases.json
  * @param {bool} UseReleases - bool, use release.json für prelive and master or use all versions from versions.json
  * @param {bool} PreSelectHighestBuild - bool, preselect the highest build number or not
  * 
@@ -183,13 +192,13 @@ function resetCheckboxes(onClickEvent) {
  * 4. Creates `optgroup` elements for each stage and `option` elements for each version/release.
  * 5. Appends the `optgroup` elements to the select element with the id 'versions'.
  */
-function GenerateSelectList(useReleases=true, PreSelectHighestBuild=true) {
+function GenerateSelectList(v, r, useReleases=true, PreSelectHighestBuild=true) {
 
     const select = document.getElementById('versions');
     const stages = {};
 
     // Group by stage, only include development versions
-    versions.forEach(obj => {
+    v.forEach(obj => {
         if ((useReleases && obj.stage == "development") || !useReleases) {
             if (!stages[obj.stage]) {
                 stages[obj.stage] = {};
@@ -204,7 +213,7 @@ function GenerateSelectList(useReleases=true, PreSelectHighestBuild=true) {
 
     if (useReleases) {
         // Group by stage, for all releases
-        releases.forEach(obj => {
+        r.forEach(obj => {
             if (!stages[obj.stage]) {
                     stages[obj.stage] = [];
                 }
@@ -234,7 +243,6 @@ function GenerateSelectList(useReleases=true, PreSelectHighestBuild=true) {
         }
     }
 
-    //<option value="" disabled selected>Select Version</option>
     const o = document.createElement('option');
     o.value = "";
     o.disabled = true;
@@ -270,7 +278,6 @@ function GenerateSelectList(useReleases=true, PreSelectHighestBuild=true) {
  * to the ID 'web-install-button'.
  */
 function setManifest() {
-    console.log('setManifest');
     build = document.getElementById('versions').value;
     variant = document.querySelector('input[name="variant"]:checked')?.value || undefined
 
@@ -279,7 +286,7 @@ function setManifest() {
     // Search in releases
     for (const release of releases) {
         if (release.build == build && (!variant || release.variant == variant)) {
-            manifestPath = release.path;
+            manifestPath = release.manifest;
             break;
         }
     }
@@ -288,7 +295,7 @@ function setManifest() {
     if (!manifestPath) {
         for (const version of versions) {
             if (version.build == build && (!variant || version.variant == variant)) {
-                manifestPath = version.path;
+                manifestPath = version.manifest;
                 break;
             }
         }
