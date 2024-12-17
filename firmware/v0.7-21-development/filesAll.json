@@ -1,98 +1,10 @@
 [
     {
-        "manifest": "firmware/v0.7-20-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-20-development/filesAll.json",
+        "name": "HomeStatusDisplay (v0.7-development)",
         "version": "v0.7",
         "stage": "development",
-        "variant": "standard",
-        "build": 20,
-        "chipFamilies": [
-            "ESP32-S2",
-            "ESP32",
-            "ESP32-S3",
-            "ESP8266",
-            "ESP32-C3"
-        ],
-        "builds": []
-    },
-    {
-        "manifest": "firmware/v0.7-15-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-15-development/filesAll.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
-        "build": 15,
-        "chipFamilies": [
-            "ESP32-S2",
-            "ESP32",
-            "ESP32-S3",
-            "ESP8266",
-            "ESP32-C3"
-        ],
-        "builds": []
-    },
-    {
-        "manifest": "firmware/v0.7-17-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-17-development/filesAll.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
-        "build": 17,
-        "chipFamilies": [
-            "ESP32-S2",
-            "ESP32",
-            "ESP32-S3",
-            "ESP8266",
-            "ESP32-C3"
-        ],
-        "builds": []
-    },
-    {
-        "manifest": "firmware/v0.7-16-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-16-development/filesAll.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
-        "build": 16,
-        "chipFamilies": [
-            "ESP32-S2",
-            "ESP32",
-            "ESP32-S3",
-            "ESP8266",
-            "ESP32-C3"
-        ],
-        "builds": []
-    },
-    {
-        "manifest": "firmware/v0.7-18-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-18-development/filesAll.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
-        "build": 18,
-        "chipFamilies": [
-            "ESP32-S2",
-            "ESP32",
-            "ESP32-S3",
-            "ESP8266",
-            "ESP32-C3"
-        ],
-        "builds": []
-    },
-    {
-        "manifest": "firmware/v0.7-21-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-21-development/filesAll.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
         "build": 21,
-        "chipFamilies": [
-            "ESP32-S2",
-            "ESP32",
-            "ESP32-S3",
-            "ESP8266",
-            "ESP32-C3"
-        ],
+        "variant": "standard",
         "builds": [
             {
                 "chipFamily": "ESP32-S2",
