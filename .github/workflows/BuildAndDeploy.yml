@@ -159,11 +159,10 @@ jobs:
         run: |
           ls -R ./
 
-      # 
-      - name: create "manifest_all" and "versions" JSON
+      - name: create "manifestAll" and "versions" JSON
         run: |
           python -m pip install --upgrade pip
-          python app/.github/scripts/createVersionsFile.py --FwDir ${{ env.FwDir }} --VersDir ${{ env.VersDir }}
+          python app/.github/scripts/createManifestAll_VersionsFile.py --FwDir ${{ env.FwDir }} --VersDir ${{ env.VersDir }}
 
       - name: Commit and push changes
         run: |
@@ -229,15 +228,15 @@ jobs:
           draft: false
           prerelease: ${{ steps.set_env_var.outputs.IS_PRERELEASE }}
         
-      # erstelle das manifest_all.json speziell für das release mit den korrekten Pfaden
+      # erstelle das manifestAll.json speziell für das release mit den korrekten Pfaden
       # füge gleichzeitg das ReleaseTag hinzu
-      - name: Create manifest_all file
+      #--ReleaseTagName ${{ steps.set_env_var.outputs.tagname }} \
+      - name: Create Release manifestAll JSON
         run: |
-          python app/.github/scripts/createReleaseAssetManifest.py \
+          python app/.github/scripts/createReleaseAssetManifestAll.py \
             --ReleaseDir release \
-            --ReleaseTagName ${{ steps.set_env_var.outputs.tagname }} \
             --ReleaseURL "${{github.server_url}}/${{env.GITHUB_OWNER}}/${{ env.GITHUB_REPOSITORY }}/releases/download/${{ steps.set_env_var.outputs.tagname }}"
-           
+            
       # suche alle Dateien aus dem Ordner release (siehe asset-download), incl aller unterordner und lade diese einzeln als release-asset hoch
       # jede Datei behält ihren originalen Namen und contenttype. Identische Dateinamen werden überschrieben
       - name: Upload Release Assets
@@ -247,6 +246,9 @@ jobs:
           for dir in $(find release -type d); do
             for file in "$dir"/*; do
               if [ -f "$file" ]; then
+                if [[ "$file" == *files.json || "$file" == *manifest.json ]]; then
+                  continue
+                fi
                 echo "Uploading $file"
                 gh release upload -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} ${{ steps.set_env_var.outputs.tagname }} "$file" --clobber
               fi
@@ -254,7 +256,7 @@ jobs:
           done
 
         
-      # gehe durch alle verfügbaren releases im Repository durch, suche die manifest_all.json.
+      # gehe durch alle verfügbaren releases im Repository durch, suche die manifestAll.json und filesAll.json.
       # Lade diese herunter ins lokale verzeichnis ./manifests und erstelle auf dieser Grundlage die releases.json
       - name: Download all Manifests, create ReleaseVersions
         env:
@@ -264,19 +266,21 @@ jobs:
           tagNames=$(gh release ls -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} --json tagName)
           
           for tag in $(echo "$tagNames" | jq -r '.[].tagName'); do
-            for asset in $(gh release view $tag -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} --json assets --jq '.assets[].name' | grep 'manifestAll'); do
-              echo "Downloading manifest: gh release download $tag -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} --pattern '$asset' --output 'manifests/${tag}/'"
+            for asset in $(gh release view $tag -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} --json assets --jq '.assets[].name' | grep -E 'manifestAll|filesAll'); do
+              echo "Downloading file: gh release download $tag -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} --pattern '$asset' --dir 'manifests/${tag}/'"
               gh release download $tag \
                 -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} \
                 --pattern "$asset" \
                 --dir "manifests/${tag}/" || true
             done
+            mkdir -p manifests/${tag}/
+            gh release view $tag -R tobiasfaust/${{ env.GITHUB_REPOSITORY }} --json assets > "manifests/${tag}/assets.json"
           done 
           python app/.github/scripts/createReleaseVersions.py \
             --ManifestDir manifests \
-            --VersionDir web-installer/firmware
-            ls -R ./manifests
-            ls -R ./release
+            --TargetDir web-installer/firmware
+          ls -R ./manifests
+          ls -R ./release
         
       - name: Commit and push changes
         env:
