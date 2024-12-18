@@ -25,6 +25,7 @@ void HSDWebserver::begin()
 
   ElegantOTA.begin(&m_server);    // Start ElegantOTA
   ElegantOTA.setGitEnv(String(GIT_OWNER), String(GIT_REPO), String(GIT_BRANCH));
+  ElegantOTA.setFWVersion(String(m_config.getVersion()) + " / Build: " + GITHUB_RUN);
   // ElegantOTA callbacks
   //ElegantOTA.onStart(onOTAStart);
   //ElegantOTA.onProgress(onOTAProgress);

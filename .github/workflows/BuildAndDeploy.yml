@@ -19,13 +19,13 @@ on:
       - '**.py'
 
 jobs:
-    
   build:
     name: BuildAndDeploy-${{ matrix.variant.firmware }}
     runs-on: ubuntu-latest
     env:
       REPOSITORY: ${{ github.event.repository.name }}
       BRANCH_NAME: ${{ github.base_ref || github.ref_name }}
+      GITHUB_RUN: ${{ github.run_number }}
 
     outputs:
       fw_version: ${{ steps.json_params.outputs.version }}
@@ -46,9 +46,9 @@ jobs:
           - firmware: firmware_ESP32-C3
             architecture: ESP32-C3
             subvariant: standard
-          - firmware: firmware_ESP8266
-            architecture: ESP8266
-            subvariant: standard  
+          - firmware: firmware_ESP32-WebSerial
+            architecture: ESP32
+            subvariant: webSerial 
             
     steps:
       - name: checkout repository
