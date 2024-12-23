@@ -29,7 +29,7 @@ function init() {
     .then(([versions, releases]) => {
         window.versions = versions;
         window.releases = releases;
-        GenerateSelectList(versions, releases, true, true);
+        GenerateSelectList(versions, [] , false, true);
         checkSupported(); 
         resetCheckboxes(setManifest);
     })
@@ -84,8 +84,9 @@ function checkSupported() {
  */
 function unsupported() {
     
-    document.getElementById('flasher').innerHTML = `Sorry, your browser is not yet supported!<br>
-    Please try on Desktop Chrome or Edge.<br>
+    document.getElementById('flasher').innerHTML = `Sorry, your browser is not yet supported!<p/>
+    Please try <b>Chrome</b>, <b>Edge</b> or <b>Opera</b>.
+    <p/>
     Find binary files here:<br>
     <a href="https://github.com/tobiasfaust/` + getRepositoryName() + `/releases" target="_blank">
     <button class="btn" slot="activate">GitHub Releases</button>
@@ -140,7 +141,7 @@ function resetCheckboxes(onClickEvent) {
     const radioButtonsContainer = document.getElementById('variants');
     radioButtonsContainer.innerHTML = ''; // Clear existing radio buttons
 
-    const variants = getAvailableVariants(versions, releases, document.getElementById('versions').value);
+    const variants = getAvailableVariants(versions, [], document.getElementById('versions').value);
 
     // Create radio buttons for each variant if > 1
     if (variants.size > 1) {
@@ -282,16 +283,16 @@ function setManifest() {
     variant = document.querySelector('input[name="variant"]:checked')?.value || undefined
 
     let manifestPath;
+    /*
+    deactivated temporarely due to: Mixed Content: The page at 'https://tobiasfaust.github.io/test/' was loaded over HTTPS, but requested an insecure resource 'http://www.diefaeuste.de:30080/https://github.com/tobiasfaust/test/releases/download/v.2.5.1-PRE-12465535356/manifestAll-standard.json'. This request has been blocked; the content must be served over HTTPS.
 
-    // Search in releases
     for (const release of releases) {
         if (release.build == build && (!variant || release.variant == variant)) {
-            manifestPath = release.manifest;
+            manifestPath = "http://www.diefaeuste.de:30080/" + release.manifest;
             break;
         }
     }
-
-    // If not found in releases, search in versions
+    */
     if (!manifestPath) {
         for (const version of versions) {
             if (version.build == build && (!variant || version.variant == variant)) {
