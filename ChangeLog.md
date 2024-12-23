@@ -13,3 +13,11 @@ Release 0.7:
   - add WebInstaller, remove initial Accesspoint handling
   - change custom wifi handling to ImprovWiFiLibrary via web-installer
   - add custom ElegantOta to select predefined binaries 
+  - add automatic Backup&Restore of configfiles when using ElegantOTA
+
+  **Breaking changes** 
+  From release 0.7 onwards, an access point will no longer be opened during an initial installation. The WiFi access data must be entered via the web installer. This is used for both initial installation and entry of WiFi access data. 
+  When updating version 0.6 to 0.7, a new installation must also be carried out because the WiFi handling has been switched to the ImprovWiFi Library. 
+  If version 0.7 is already installed on the ESP device, an OTA update is sufficient. See “Update” button at ESP-webinterface 
+
+  Detailed instructions can be found in the [WiKi](https://github.com/tobiasfaust/HomeStatusDisplay/wiki)
