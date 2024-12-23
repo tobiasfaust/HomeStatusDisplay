@@ -78,9 +78,9 @@ def build_releasejson(root: str) -> list:
                                 for b in builds:
                                     for part in b.get('parts', []):
                                         part_path = part.get('path')
+                                        part_filename = os.path.basename(part_path)
                                         for asset in assets.get('assets', []):
-                                            if asset.get('url') == part_path:
-                                                part['asset_id'] = asset.get('id')
+                                            if asset.get('name') == part_filename:
                                                 part['asset_apiUrl'] = asset.get('apiUrl')
                                                 break   
                     
