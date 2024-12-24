@@ -13,7 +13,7 @@ public:
   virtual ~HSDConfigFile();
 
   bool read(char* buffer, size_t bufSize);
-  bool write(JsonObject* data);
+  bool write(JsonDocument& data);
   
 private:
   

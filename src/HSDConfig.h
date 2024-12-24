@@ -11,26 +11,26 @@
   #define startLittleFS LittleFS.begin()
 #endif
 
-#define JSON_KEY_HOST                  (F("host"))
-#define JSON_KEY_GUI_USER              (F("guiUser"))
-#define JSON_KEY_GUI_PASS              (F("guiPass"))
-#define JSON_KEY_MQTT_SERVER           (F("mqttServer"))
-#define JSON_KEY_MQTT_SERVER_PORT      (F("mqttServerPort"))
-#define JSON_KEY_MQTT_AUTHUSER         (F("mqttServerAuthUser"))
-#define JSON_KEY_MQTT_AUTHPASS         (F("mqttServerAuthPass"))
-#define JSON_KEY_MQTT_STATUS_TOPIC     (F("mqttStatusTopic"))
-#define JSON_KEY_MQTT_TEST_TOPIC       (F("mqttTestTopic"))
-#define JSON_KEY_MQTT_WILL_TOPIC       (F("mqttWillTopic"))
-#define JSON_KEY_LED_COUNT             (F("ledCount"))
-#define JSON_KEY_LED_PIN               (F("ledPin"))
-#define JSON_KEY_LED_BRIGHTNESS        (F("ledBrightness"))
-#define JSON_KEY_COLORMAPPING_MSG      (F("m"))
-#define JSON_KEY_COLORMAPPING_TYPE     (F("t"))
-#define JSON_KEY_COLORMAPPING_COLOR    (F("c"))
-#define JSON_KEY_COLORMAPPING_BEHAVIOR (F("b"))
-#define JSON_KEY_DEVICEMAPPING_NAME    (F("n"))
-#define JSON_KEY_DEVICEMAPPING_TYPE    (F("t"))
-#define JSON_KEY_DEVICEMAPPING_LED     (F("l"))
+#define JSON_KEY_HOST                  "host"
+#define JSON_KEY_GUI_USER              "guiUser"
+#define JSON_KEY_GUI_PASS              "guiPass"
+#define JSON_KEY_MQTT_SERVER           "mqttServer"
+#define JSON_KEY_MQTT_SERVER_PORT      "mqttServerPort"
+#define JSON_KEY_MQTT_AUTHUSER         "mqttServerAuthUser"
+#define JSON_KEY_MQTT_AUTHPASS         "mqttServerAuthPass"
+#define JSON_KEY_MQTT_STATUS_TOPIC     "mqttStatusTopic"
+#define JSON_KEY_MQTT_TEST_TOPIC       "mqttTestTopic"
+#define JSON_KEY_MQTT_WILL_TOPIC       "mqttWillTopic"
+#define JSON_KEY_LED_COUNT             "ledCount"
+#define JSON_KEY_LED_PIN               "ledPin"
+#define JSON_KEY_LED_BRIGHTNESS        "ledBrightness"
+#define JSON_KEY_COLORMAPPING_MSG      "m"
+#define JSON_KEY_COLORMAPPING_TYPE     "t"
+#define JSON_KEY_COLORMAPPING_COLOR    "c"
+#define JSON_KEY_COLORMAPPING_BEHAVIOR "b"
+#define JSON_KEY_DEVICEMAPPING_NAME    "n"
+#define JSON_KEY_DEVICEMAPPING_TYPE    "t"
+#define JSON_KEY_DEVICEMAPPING_LED     "l"
 
 class HSDConfig
 {
@@ -263,7 +263,7 @@ private:
   };
 
   bool readMainConfigFile();
-  void printMainConfigFile(JsonObject& json);
+  void printMainConfigFile(JsonDocument& json);
   void writeMainConfigFile();
 
   bool readColorMappingConfigFile();

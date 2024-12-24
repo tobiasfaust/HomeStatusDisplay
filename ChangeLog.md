@@ -14,6 +14,7 @@ Release 0.7:
   - change custom wifi handling to ImprovWiFiLibrary via web-installer
   - add custom ElegantOta to select predefined binaries 
   - add automatic Backup&Restore of configfiles when using ElegantOTA
+  - migrate from Arduino5 to Arduino7
 
   **Breaking changes** 
   From release 0.7 onwards, an access point will no longer be opened during an initial installation. The WiFi access data must be entered via the web installer. This is used for both initial installation and entry of WiFi access data. 
