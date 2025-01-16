@@ -314,7 +314,6 @@ void HSDConfig::writeMainConfigFile()
 void HSDConfig::writeColorMappingConfigFile()
 {
   JsonDocument doc;
-  JsonArray json = doc.to<JsonArray>();
 
   for(int index = 0; index < m_cfgColorMapping.size(); index++)
   { 
