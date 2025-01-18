@@ -52,7 +52,7 @@ bool HSDConfigFile::read(char* buffer, size_t bufSize)
   return success;
 }
 
-bool HSDConfigFile::write(JsonObject* data)
+bool HSDConfigFile::write(JsonDocument& data)
 {
   bool success = false;
 
@@ -63,7 +63,7 @@ bool HSDConfigFile::write(JsonObject* data)
 
   if(configFile)
   {  
-    data->printTo(configFile);
+    serializeJson(data, configFile);
     configFile.close();
     
     success = true;

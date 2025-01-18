@@ -2,17 +2,6 @@
 #include <FS.h>
 #include <ArduinoJson.h>
 
-static const int MAX_SIZE_MAIN_CONFIG_FILE = 400;
-static const int JSON_BUFFER_MAIN_CONFIG_FILE = 500;
-
-static const int MAX_SIZE_COLOR_MAPPING_CONFIG_FILE = 1500;     // 1401 exactly
-static const int JSON_BUFFER_COLOR_MAPPING_CONFIG_FILE = 3800;  // 3628 exactly
-
-static const int MAX_SIZE_DEVICE_MAPPING_CONFIG_FILE = 1900;    // 1801 exactly
-static const int JSON_BUFFER_DEVICE_MAPPING_CONFIG_FILE = 4000; // 3908 exactly
-
-static const uint8_t DEFAULT_LED_BRIGHTNESS = 50;
-
 const constexpr HSDConfig::ColorTranslator HSDConfig::colorTranslator[8];
 
 HSDConfig::HSDConfig()
@@ -24,8 +13,8 @@ m_colorMappingConfigFile(String("/colormapping.json")),
 m_deviceMappingConfigFile(String("/devicemapping.json"))
 {  
   // reset non-configurable members
-  setVersion("");
   setHost("");
+  this->version = (String(Release) + "@" + String(GIT_BRANCH));
 
   // reset configurable members
   resetMainConfigData();
@@ -33,12 +22,11 @@ m_deviceMappingConfigFile(String("/devicemapping.json"))
   resetDeviceMappingConfigData();
 }
 
-void HSDConfig::begin(const char* version, const char* defaultIdentifier)
+void HSDConfig::begin(const char* defaultIdentifier)
 {
   Serial.println(F(""));
   Serial.println(F("Initializing config."));
 
-  setVersion(version);
   setHost(defaultIdentifier);
   
   if(startLittleFS)
@@ -53,16 +41,42 @@ void HSDConfig::begin(const char* version, const char* defaultIdentifier)
   {
     Serial.println(F("Failed to mount file system"));
   }
+  
+  // determine chip family
+  #ifdef ESP32
+    String variantString = ARDUINO_VARIANT;
+  #else
+    String variantString = "esp8266";
+  #endif
+
+  if (variantString == "esp32s3") {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP32_S3;
+      this->ChipFamilyStr = "ESP32-S3";
+  } else if (variantString == "esp32c3") {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP32_C3;
+      this->ChipFamilyStr = "ESP32-C3";
+  } else if (variantString == "esp32s2") {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP32_S2;
+      this->ChipFamilyStr = "ESP32-S2";
+  } else if (variantString == "esp8266") {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP8266;
+      this->ChipFamilyStr = "ESP8266";
+  } else {
+      this->ChipFamily = ImprovTypes::ChipFamily::CF_ESP32;
+      this->ChipFamilyStr = "ESP32";
+  }
 }
 
 void HSDConfig::resetMainConfigData()
 {
   Serial.println(F("Deleting main config data."));
-    
-  setWifiSSID("");
-  setWifiPSK("");
-
-  setMqttServer("");
+  
+  setGuiUser("admin");
+  setGuiPass("admin");
+  setMqttServer("test.mosquitto.org");
+  setMqttServerPort(1883);
+  setMqttServerAuthUser("");
+  setMqttServerAuthPass("");
   setMqttStatusTopic("");
   setMqttTestTopic("");  
   setMqttWillTopic(""); 
@@ -96,32 +110,43 @@ bool HSDConfig::readMainConfigFile()
 
   if(m_mainConfigFile.read(fileBuffer, MAX_SIZE_MAIN_CONFIG_FILE))
   {
-    DynamicJsonBuffer jsonBuffer(JSON_BUFFER_MAIN_CONFIG_FILE);
-    JsonObject& json = jsonBuffer.parseObject(fileBuffer);
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, fileBuffer);
 
-    if (json.success()) 
+    if (!error) 
     {
       Serial.println(F("Main config data successfully parsed."));
-      Serial.print(F("JSON length is ")); Serial.println(json.measureLength());     
-      printMainConfigFile(json);
+      Serial.print(F("JSON length is ")); Serial.println(measureJson(doc));     
+      printMainConfigFile(doc);
       Serial.println(F(""));
 
-      if(json.containsKey(JSON_KEY_HOST) && json.containsKey(JSON_KEY_WIFI_SSID) && json.containsKey(JSON_KEY_WIFI_PSK) && 
-         json.containsKey(JSON_KEY_MQTT_SERVER) && json.containsKey(JSON_KEY_MQTT_STATUS_TOPIC) && json.containsKey(JSON_KEY_MQTT_TEST_TOPIC) && json.containsKey(JSON_KEY_MQTT_WILL_TOPIC) &&
-         json.containsKey(JSON_KEY_LED_COUNT) && json.containsKey(JSON_KEY_LED_PIN))
+      if(doc[JSON_KEY_HOST] && 
+         doc[JSON_KEY_GUI_USER] && 
+         doc[JSON_KEY_GUI_PASS] && 
+         doc[JSON_KEY_MQTT_SERVER] && 
+         doc[JSON_KEY_MQTT_AUTHUSER] && 
+         doc[JSON_KEY_MQTT_AUTHPASS] &&          
+         doc[JSON_KEY_MQTT_STATUS_TOPIC] && 
+         doc[JSON_KEY_MQTT_TEST_TOPIC] && 
+         doc[JSON_KEY_MQTT_WILL_TOPIC] &&
+         doc[JSON_KEY_LED_COUNT] && 
+         doc[JSON_KEY_LED_PIN])
       {
         Serial.println(F("Config data is complete."));
 
-        setHost(json[JSON_KEY_HOST]);
-        setWifiSSID(json[JSON_KEY_WIFI_SSID]);
-        setWifiPSK(json[JSON_KEY_WIFI_PSK]);
-        setMqttServer(json[JSON_KEY_MQTT_SERVER]);
-        setMqttStatusTopic(json[JSON_KEY_MQTT_STATUS_TOPIC]);
-        setMqttTestTopic(json[JSON_KEY_MQTT_TEST_TOPIC]);
-        setMqttWillTopic(json[JSON_KEY_MQTT_WILL_TOPIC]);
-        setNumberOfLeds(json[JSON_KEY_LED_COUNT]);
-        setLedDataPin(json[JSON_KEY_LED_PIN]);
-        setLedBrightness(json[JSON_KEY_LED_BRIGHTNESS]);
+        setHost(doc[JSON_KEY_HOST]);
+        setGuiUser(doc[JSON_KEY_GUI_USER]);
+        setGuiPass(doc[JSON_KEY_GUI_PASS]);
+        setMqttServer(doc[JSON_KEY_MQTT_SERVER]);
+        setMqttServerPort(doc[JSON_KEY_MQTT_SERVER_PORT]);
+        setMqttServerAuthUser(doc[JSON_KEY_MQTT_AUTHUSER]);
+        setMqttServerAuthPass(doc[JSON_KEY_MQTT_AUTHPASS]);
+        setMqttStatusTopic(doc[JSON_KEY_MQTT_STATUS_TOPIC]);
+        setMqttTestTopic(doc[JSON_KEY_MQTT_TEST_TOPIC]);
+        setMqttWillTopic(doc[JSON_KEY_MQTT_WILL_TOPIC]);
+        setNumberOfLeds(doc[JSON_KEY_LED_COUNT]);
+        setLedDataPin(doc[JSON_KEY_LED_PIN]);
+        setLedBrightness(doc[JSON_KEY_LED_BRIGHTNESS]);
 
         success = true;
       }
@@ -141,12 +166,16 @@ bool HSDConfig::readMainConfigFile()
   return success;
 }
 
-void HSDConfig::printMainConfigFile(JsonObject& json)
+void HSDConfig::printMainConfigFile(JsonDocument& json)
 {
+  Serial.print  (F("  • version         : ")); Serial.println(getVersion());
   Serial.print  (F("  • host            : ")); Serial.println((const char*)(json[JSON_KEY_HOST]));
-  Serial.print  (F("  • wifiSSID        : ")); Serial.println((const char*)(json[JSON_KEY_WIFI_SSID]));
-  Serial.println(F("  • wifiPSK         : not shown"));
+  Serial.print  (F("  • guiUser         : ")); Serial.println((const char*)(json[JSON_KEY_GUI_USER]));
+  Serial.println(F("  • guiPass         : not shown"));
   Serial.print  (F("  • mqttServer      : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_SERVER]));
+  Serial.print  (F("  • mqttServerPort  : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_SERVER_PORT]));
+  Serial.print  (F("  • mqttServerUser  : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_AUTHUSER]));
+  Serial.println(F("  • mqttServerPass  : not shown"));
   Serial.print  (F("  • mqttStatusTopic : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_STATUS_TOPIC]));
   Serial.print  (F("  • mqttTestTopic   : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_TEST_TOPIC]));
   Serial.print  (F("  • mqttWillTopic   : ")); Serial.println((const char*)(json[JSON_KEY_MQTT_WILL_TOPIC]));
@@ -165,31 +194,27 @@ bool HSDConfig::readColorMappingConfigFile()
 
   if(m_colorMappingConfigFile.read(fileBuffer, MAX_SIZE_COLOR_MAPPING_CONFIG_FILE))
   {
-    DynamicJsonBuffer jsonBuffer(JSON_BUFFER_COLOR_MAPPING_CONFIG_FILE);
-    JsonObject& json = jsonBuffer.parseObject(fileBuffer);
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, fileBuffer);
 
-    if (json.success()) 
-    {
+    if (!error) {
       Serial.println(F("Color mapping config data successfully parsed."));
-      Serial.print(F("JSON length is ")); Serial.println(json.measureLength());  
-      //json.prettyPrintTo(Serial);
-      Serial.println(F(""));
+      Serial.print(F("JSON length is: ")); Serial.println(measureJson(doc));  
+      //serializeJsonPretty(doc, Serial); Serial.println();
 
       success = true;
       int index = 0;
       
-      for(JsonObject::iterator it = json.begin(); it != json.end(); ++it)
-      {
-        JsonObject& entry = json[it->key]; 
+      JsonArray arr = doc.as<JsonArray>();
 
-        if(entry.containsKey(JSON_KEY_COLORMAPPING_MSG) && entry.containsKey(JSON_KEY_COLORMAPPING_TYPE) &&
-           entry.containsKey(JSON_KEY_COLORMAPPING_COLOR) && entry.containsKey(JSON_KEY_COLORMAPPING_BEHAVIOR) )
-        {
+      for (JsonVariant obj : arr) {
+        if(obj[JSON_KEY_COLORMAPPING_MSG]) {
+
           addColorMappingEntry(index,
-                               entry[JSON_KEY_COLORMAPPING_MSG].as<char*>(), 
-                               (deviceType)(entry[JSON_KEY_COLORMAPPING_TYPE].as<int>()), 
-                               (Color)(id2color(entry[JSON_KEY_COLORMAPPING_COLOR].as<int>())), 
-                               (Behavior)(entry[JSON_KEY_COLORMAPPING_BEHAVIOR].as<int>())); 
+                               obj[JSON_KEY_COLORMAPPING_MSG].as<String>(), 
+                               (deviceType)(obj[JSON_KEY_COLORMAPPING_TYPE].as<int>()), 
+                               (Color)(id2color(obj[JSON_KEY_COLORMAPPING_COLOR].as<int>())), 
+                               (Behavior)(obj[JSON_KEY_COLORMAPPING_BEHAVIOR].as<int>())); 
 
           index++;
         }
@@ -221,30 +246,25 @@ bool HSDConfig::readDeviceMappingConfigFile()
 
   if(m_deviceMappingConfigFile.read(fileBuffer, MAX_SIZE_DEVICE_MAPPING_CONFIG_FILE))
   {
-    DynamicJsonBuffer jsonBuffer(JSON_BUFFER_DEVICE_MAPPING_CONFIG_FILE);
-    JsonObject& json = jsonBuffer.parseObject(fileBuffer);
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, fileBuffer);
 
-    if (json.success()) 
-    {
+    if (!error) {
       Serial.println(F("Device mapping config data successfully parsed."));
-      Serial.print(F("JSON length is ")); Serial.println(json.measureLength());  
-      //json.prettyPrintTo(Serial);
-      Serial.println(F(""));
+      Serial.print(F("JSON length is ")); Serial.println(measureJson(doc));  
+      //serializeJsonPretty(doc, Serial); Serial.println();
 
       success = true;
       int index = 0;
-      
-      for(JsonObject::iterator it = json.begin(); it != json.end(); ++it)
-      {
-        JsonObject& entry = json[it->key]; 
+      JsonArray arr = doc.as<JsonArray>();
 
-        if(entry.containsKey(JSON_KEY_DEVICEMAPPING_NAME) && entry.containsKey(JSON_KEY_DEVICEMAPPING_TYPE) &&
-           entry.containsKey(JSON_KEY_DEVICEMAPPING_LED) )
-        {
+      for (JsonVariant obj : arr) {
+
+        if(obj[JSON_KEY_DEVICEMAPPING_NAME]) {
           addDeviceMappingEntry(index,
-                                entry[JSON_KEY_DEVICEMAPPING_NAME].as<char*>(), 
-                                (deviceType)(entry[JSON_KEY_DEVICEMAPPING_TYPE].as<int>()), 
-                                entry[JSON_KEY_DEVICEMAPPING_LED].as<int>());
+                                obj[JSON_KEY_DEVICEMAPPING_NAME].as<String>(), 
+                                (deviceType)(obj[JSON_KEY_DEVICEMAPPING_TYPE].as<int>()), 
+                                obj[JSON_KEY_DEVICEMAPPING_LED].as<int>());
 
            index++;                               
         }
@@ -268,13 +288,16 @@ bool HSDConfig::readDeviceMappingConfigFile()
 
 void HSDConfig::writeMainConfigFile()
 {
-  DynamicJsonBuffer jsonBuffer(JSON_BUFFER_MAIN_CONFIG_FILE);
-  JsonObject& json = jsonBuffer.createObject();
+  JsonDocument jsonBuffer;
+  JsonObject json = jsonBuffer.to<JsonObject>();
 
   json[JSON_KEY_HOST] = m_cfgHost;
-  json[JSON_KEY_WIFI_SSID] = m_cfgWifiSSID;
-  json[JSON_KEY_WIFI_PSK] = m_cfgWifiPSK;
+  json[JSON_KEY_GUI_USER] = m_cfgGuiUser;
+  json[JSON_KEY_GUI_PASS] = m_cfgGuiPass;
   json[JSON_KEY_MQTT_SERVER] = m_cfgMqttServer;
+  json[JSON_KEY_MQTT_SERVER_PORT] = m_cfgMqttServerPort;
+  json[JSON_KEY_MQTT_AUTHUSER] = m_cfgMqttServerAuthUser;
+  json[JSON_KEY_MQTT_AUTHPASS] = m_cfgMqttServerAuthPass;
   json[JSON_KEY_MQTT_STATUS_TOPIC] = m_cfgMqttStatusTopic;
   json[JSON_KEY_MQTT_TEST_TOPIC] = m_cfgMqttTestTopic;
   json[JSON_KEY_MQTT_WILL_TOPIC] = m_cfgMqttWillTopic;
@@ -282,7 +305,7 @@ void HSDConfig::writeMainConfigFile()
   json[JSON_KEY_LED_PIN] = m_cfgLedDataPin;
   json[JSON_KEY_LED_BRIGHTNESS] = m_cfgLedBrightness;
 
-  if(!m_mainConfigFile.write(&json))
+  if(!m_mainConfigFile.write(jsonBuffer))
   {
     onFileWriteError();
   }
@@ -290,8 +313,7 @@ void HSDConfig::writeMainConfigFile()
 
 void HSDConfig::writeColorMappingConfigFile()
 {
-  DynamicJsonBuffer jsonBuffer(JSON_BUFFER_COLOR_MAPPING_CONFIG_FILE);
-  JsonObject& json = jsonBuffer.createObject();
+  JsonDocument doc;
 
   for(int index = 0; index < m_cfgColorMapping.size(); index++)
   { 
@@ -304,7 +326,7 @@ void HSDConfig::writeColorMappingConfigFile()
       Serial.print(F(", msg="));
       Serial.println(String(mapping->msg));
       
-      JsonObject& colorMappingEntry = json.createNestedObject(String(index));
+      JsonObject colorMappingEntry = doc.add<JsonObject>();
   
       colorMappingEntry[JSON_KEY_COLORMAPPING_MSG] = mapping->msg;
       colorMappingEntry[JSON_KEY_COLORMAPPING_TYPE] = (int)mapping->type;
@@ -318,7 +340,7 @@ void HSDConfig::writeColorMappingConfigFile()
     }
   }
 
-  if(!m_colorMappingConfigFile.write(&json))
+  if(!m_colorMappingConfigFile.write(doc))
   {
     onFileWriteError();
   }
@@ -330,8 +352,8 @@ void HSDConfig::writeColorMappingConfigFile()
 
 void HSDConfig::writeDeviceMappingConfigFile()
 {
-  DynamicJsonBuffer jsonBuffer(JSON_BUFFER_DEVICE_MAPPING_CONFIG_FILE);
-  JsonObject& json = jsonBuffer.createObject();
+  JsonDocument doc;
+  JsonArray json = doc.to<JsonArray>();
 
   for(int index = 0; index < m_cfgDeviceMapping.size(); index++)
   {
@@ -342,7 +364,7 @@ void HSDConfig::writeDeviceMappingConfigFile()
       Serial.print(F("Preparing to write device mapping config file index "));
       Serial.println(String(index));
         
-      JsonObject& deviceMappingEntry = json.createNestedObject(String(index));
+      JsonObject deviceMappingEntry = json.add<JsonObject>();
   
       deviceMappingEntry[JSON_KEY_DEVICEMAPPING_NAME] = mapping->name;
       deviceMappingEntry[JSON_KEY_DEVICEMAPPING_TYPE] = (int)mapping->type;
@@ -355,7 +377,7 @@ void HSDConfig::writeDeviceMappingConfigFile()
     }
   }
   
-  if(!m_deviceMappingConfigFile.write(&json))
+  if(!m_deviceMappingConfigFile.write(doc))
   {
     onFileWriteError();
   } 
@@ -523,37 +545,30 @@ bool HSDConfig::setHost(const char* host)
 
 const char* HSDConfig::getVersion() const
 {
-  return m_cfgVersion;
+  return this->version.c_str();
 }
 
-bool HSDConfig::setVersion(const char* version)
+const char* HSDConfig::getGuiUser() const
 {
-  strncpy(m_cfgVersion, version, MAX_VERSION_LEN);
-  m_cfgVersion[MAX_VERSION_LEN] = '\0';
+  return m_cfgGuiUser;
+}
+
+bool HSDConfig::setGuiUser(const char* guiuser)
+{
+  strncpy(m_cfgGuiUser, guiuser, MAX_GUI_USER_LEN);
+  m_cfgGuiUser[MAX_GUI_USER_LEN] = '\0';
   return true;
 }
 
-const char* HSDConfig::getWifiSSID() const
+const char* HSDConfig::getGuiPass() const
 {
-  return m_cfgWifiSSID;
+  return m_cfgGuiPass;
 }
 
-bool HSDConfig::setWifiSSID(const char* ssid)
+bool HSDConfig::setGuiPass(const char* guipass)
 {
-  strncpy(m_cfgWifiSSID, ssid, MAX_WIFI_SSID_LEN);
-  m_cfgWifiSSID[MAX_WIFI_SSID_LEN] = '\0';
-  return true;
-}
-
-const char* HSDConfig::getWifiPSK() const
-{
-  return m_cfgWifiPSK;
-}
-
-bool HSDConfig::setWifiPSK(const char* psk)
-{
-  strncpy(m_cfgWifiPSK, psk, MAX_WIFI_PSK_LEN);
-  m_cfgWifiPSK[MAX_WIFI_PSK_LEN] = '\0';
+  strncpy(m_cfgGuiPass, guipass, MAX_GUI_PASS_LEN);
+  m_cfgGuiPass[MAX_GUI_PASS_LEN] = '\0';
   return true;
 }
 
@@ -562,10 +577,45 @@ const char* HSDConfig::getMqttServer() const
   return m_cfgMqttServer;
 }
 
+uint16_t HSDConfig::getMqttServerPort() const
+{
+  return m_cfgMqttServerPort;
+} 
+
 bool HSDConfig::setMqttServer(const char* ip)
 {
   strncpy(m_cfgMqttServer, ip, MAX_MQTT_SERVER_LEN);
   m_cfgMqttServer[MAX_MQTT_SERVER_LEN] = '\0';
+  return true;
+}
+
+bool HSDConfig::setMqttServerPort(uint16_t port)
+{
+  m_cfgMqttServerPort = port;
+  return true;
+} 
+
+const char* HSDConfig::getMqttServerAuthUser() const
+{
+  return m_cfgMqttServerAuthUser;
+}
+
+bool HSDConfig::setMqttServerAuthUser(const char* mqttauthuser)
+{
+  strncpy(m_cfgMqttServerAuthUser, mqttauthuser, MAX_MQTT_SERVER_USER_LEN);
+  m_cfgMqttServerAuthUser[MAX_MQTT_SERVER_USER_LEN] = '\0';
+  return true;
+}
+
+const char* HSDConfig::getMqttServerAuthPass() const
+{
+  return m_cfgMqttServerAuthPass;
+}
+
+bool HSDConfig::setMqttServerAuthPass(const char* mqttauthpass)
+{
+  strncpy(m_cfgMqttServerAuthPass, mqttauthpass, MAX_MQTT_SERVER_PASS_LEN);
+  m_cfgMqttServerAuthPass[MAX_MQTT_SERVER_PASS_LEN] = '\0';
   return true;
 }
 
@@ -703,4 +753,3 @@ HSDConfig::Color HSDConfig::getLedColor(int colorMapIndex)
 {
   return m_cfgColorMapping.get(colorMapIndex)->color;
 }
-

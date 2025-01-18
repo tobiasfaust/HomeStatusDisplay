@@ -25,12 +25,12 @@ void HSDMqtt::begin()
   if(mqttIpAddr.fromString(m_config.getMqttServer()))
   {
     // valid ip address entered 
-    m_pubSubClient.setServer(mqttIpAddr, 1883); 
+    m_pubSubClient.setServer(mqttIpAddr, m_config.getMqttServerPort()); 
   }
   else
   {
     // invalid ip address, try as hostname
-    m_pubSubClient.setServer(m_config.getMqttServer(), 1883);  
+    m_pubSubClient.setServer(m_config.getMqttServer(), m_config.getMqttServerPort());  
   }
 }
 
@@ -84,21 +84,27 @@ bool HSDMqtt::reconnect()
   // Create a random client ID
   String clientId = "ESP8266Client-";
   clientId += String(random(0xffff), HEX);
-
-  Serial.print(F("Connecting to MQTT broker "));
-  Serial.print(String(m_config.getMqttServer()));
-  Serial.print(" with client id " + clientId + "... ");
+  
+  Serial.printf("Connecting to MQTT broker %s:%d with client id %s...\n", m_config.getMqttServer(), m_config.getMqttServerPort(), clientId.c_str());
 
   const char* willTopic = m_config.getMqttWillTopic();
+  const char* mqttAuthUser = m_config.getMqttServerAuthUser();
+  const char* mqttAuthPass = m_config.getMqttServerAuthPass();
   bool connected = false;
-  
-  if(isTopicValid(willTopic))
-  {
-    connected = m_pubSubClient.connect(clientId.c_str(), willTopic, 0, true, "off");
-  }
-  else
-  {
-    connected = m_pubSubClient.connect(clientId.c_str());
+
+  if(strlen(mqttAuthUser) != 0 && strlen(mqttAuthPass) != 0){
+    Serial.print(" connecting with User and Pass ");
+    if(isTopicValid(willTopic)) {
+        connected = m_pubSubClient.connect(clientId.c_str(), mqttAuthUser, mqttAuthPass, willTopic, 0, true, "off");
+    } else {
+        connected = m_pubSubClient.connect(clientId.c_str(), mqttAuthUser, mqttAuthPass);
+    }
+  } else {
+    if(isTopicValid(willTopic)) {
+      connected = m_pubSubClient.connect(clientId.c_str(), willTopic, 0, true, "off");
+    } else {
+      connected = m_pubSubClient.connect(clientId.c_str());
+    }
   }
   
   if(connected) 

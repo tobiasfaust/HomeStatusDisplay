@@ -45,5 +45,6 @@ private:
   int m_numConnectRetriesDone;
   int m_retryDelay;
   unsigned long m_millisLastConnectTry;
+  const char* mqttauthuser;
+  const char* mqttauthpass;
 };
-

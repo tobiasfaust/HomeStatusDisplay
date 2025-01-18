@@ -2,6 +2,8 @@
 
 #include "HSDConfigFile.h"
 #include "PreAllocatedLinkedList.h"
+#include <ImprovWiFiLibrary.h>
+#include <_Release.h>
 
 #ifdef ESP32
   #define startLittleFS LittleFS.begin(true)
@@ -9,23 +11,26 @@
   #define startLittleFS LittleFS.begin()
 #endif
 
-#define JSON_KEY_HOST                  (F("host"))
-#define JSON_KEY_WIFI_SSID             (F("wifiSSID"))
-#define JSON_KEY_WIFI_PSK              (F("wifiPSK"))
-#define JSON_KEY_MQTT_SERVER           (F("mqttServer"))
-#define JSON_KEY_MQTT_STATUS_TOPIC     (F("mqttStatusTopic"))
-#define JSON_KEY_MQTT_TEST_TOPIC       (F("mqttTestTopic"))
-#define JSON_KEY_MQTT_WILL_TOPIC       (F("mqttWillTopic"))
-#define JSON_KEY_LED_COUNT             (F("ledCount"))
-#define JSON_KEY_LED_PIN               (F("ledPin"))
-#define JSON_KEY_LED_BRIGHTNESS        (F("ledBrightness"))
-#define JSON_KEY_COLORMAPPING_MSG      (F("m"))
-#define JSON_KEY_COLORMAPPING_TYPE     (F("t"))
-#define JSON_KEY_COLORMAPPING_COLOR    (F("c"))
-#define JSON_KEY_COLORMAPPING_BEHAVIOR (F("b"))
-#define JSON_KEY_DEVICEMAPPING_NAME    (F("n"))
-#define JSON_KEY_DEVICEMAPPING_TYPE    (F("t"))
-#define JSON_KEY_DEVICEMAPPING_LED     (F("l"))
+#define JSON_KEY_HOST                  "host"
+#define JSON_KEY_GUI_USER              "guiUser"
+#define JSON_KEY_GUI_PASS              "guiPass"
+#define JSON_KEY_MQTT_SERVER           "mqttServer"
+#define JSON_KEY_MQTT_SERVER_PORT      "mqttServerPort"
+#define JSON_KEY_MQTT_AUTHUSER         "mqttServerAuthUser"
+#define JSON_KEY_MQTT_AUTHPASS         "mqttServerAuthPass"
+#define JSON_KEY_MQTT_STATUS_TOPIC     "mqttStatusTopic"
+#define JSON_KEY_MQTT_TEST_TOPIC       "mqttTestTopic"
+#define JSON_KEY_MQTT_WILL_TOPIC       "mqttWillTopic"
+#define JSON_KEY_LED_COUNT             "ledCount"
+#define JSON_KEY_LED_PIN               "ledPin"
+#define JSON_KEY_LED_BRIGHTNESS        "ledBrightness"
+#define JSON_KEY_COLORMAPPING_MSG      "m"
+#define JSON_KEY_COLORMAPPING_TYPE     "t"
+#define JSON_KEY_COLORMAPPING_COLOR    "c"
+#define JSON_KEY_COLORMAPPING_BEHAVIOR "b"
+#define JSON_KEY_DEVICEMAPPING_NAME    "n"
+#define JSON_KEY_DEVICEMAPPING_TYPE    "t"
+#define JSON_KEY_DEVICEMAPPING_LED     "l"
 
 class HSDConfig
 {
@@ -34,6 +39,8 @@ public:
 
   static const int MAX_DEVICE_MAPPING_NAME_LEN = 25;
   static const int MAX_COLOR_MAPPING_MSG_LEN = 15;
+
+  static const uint8_t DEFAULT_LED_BRIGHTNESS = 50;
   
   /*
    * Enum which defines the types of devices which can send messages.
@@ -133,7 +140,7 @@ public:
 
   HSDConfig();
 
-  void begin(const char* version, const char* defaultIdentifier);
+  void begin(const char* defaultIdentifier);
 
   void saveMain();
   
@@ -143,21 +150,33 @@ public:
   void saveDeviceMapping();
   void updateDeviceMapping();
 
+  const String& getChipFamilyStr() {return ChipFamilyStr;}
+  const ImprovTypes::ChipFamily& getChipFamily() {return ChipFamily;}
+
   const char* getVersion() const;
-  bool setVersion(const char* version);
+  String version;
 
   const char* getHost() const;
   bool setHost(const char* host);
 
-  const char* getWifiSSID() const;
-  bool setWifiSSID(const char* ssid);
+  const char* getGuiUser() const;
+  bool setGuiUser(const char* guiuser);
 
-  const char* getWifiPSK() const;
-  bool setWifiPSK(const char* psk);
+  const char* getGuiPass() const;
+  bool setGuiPass(const char* guipass);
 
   const char* getMqttServer() const;
   bool setMqttServer(const char* ip);
 
+  uint16_t getMqttServerPort() const;
+  bool setMqttServerPort(uint16_t port);
+
+  const char* getMqttServerAuthUser() const;
+  bool setMqttServerAuthUser(const char* mqttauthuser);
+
+  const char* getMqttServerAuthPass() const;
+  bool setMqttServerAuthPass(const char* mqttauthpass);
+  
   const char* getMqttStatusTopic() const;
   bool setMqttStatusTopic(const char* topic);
 
@@ -244,7 +263,7 @@ private:
   };
 
   bool readMainConfigFile();
-  void printMainConfigFile(JsonObject& json);
+  void printMainConfigFile(JsonDocument& json);
   void writeMainConfigFile();
 
   bool readColorMappingConfigFile();
@@ -255,11 +274,15 @@ private:
 
   void onFileWriteError();
 
-  static const int MAX_VERSION_LEN           = 20;
+  ImprovTypes::ChipFamily ChipFamily;
+  String ChipFamilyStr;
+
   static const int MAX_HOST_LEN              = 30;
-  static const int MAX_WIFI_SSID_LEN         = 30;
-  static const int MAX_WIFI_PSK_LEN          = 64;
-  static const int MAX_MQTT_SERVER_LEN       = 20;
+  static const int MAX_GUI_USER_LEN          = 50;
+  static const int MAX_GUI_PASS_LEN          = 50;
+  static const int MAX_MQTT_SERVER_LEN       = 50;
+  static const int MAX_MQTT_SERVER_USER_LEN  = 50;
+  static const int MAX_MQTT_SERVER_PASS_LEN  = 50;
   static const int MAX_MQTT_STATUS_TOPIC_LEN = 50;
   static const int MAX_MQTT_TEST_TOPIC_LEN   = 50;
   static const int MAX_MQTT_WILL_TOPIC_LEN   = 50;
@@ -267,9 +290,26 @@ private:
   #ifdef ESP32
     static const int MAX_COLOR_MAP_ENTRIES     = 50;
     static const int MAX_DEVICE_MAP_ENTRIES    = 100;
+    static const int MAX_SIZE_MAIN_CONFIG_FILE = 580;
+    static const int JSON_BUFFER_MAIN_CONFIG_FILE = 600;
+    
+    static const int MAX_SIZE_COLOR_MAPPING_CONFIG_FILE = 1500;     // 1401 exactly
+    static const int JSON_BUFFER_COLOR_MAPPING_CONFIG_FILE = 3800;  // 3628 exactly
+
+    static const int MAX_SIZE_DEVICE_MAPPING_CONFIG_FILE = 1900;    // 1801 exactly
+    static const int JSON_BUFFER_DEVICE_MAPPING_CONFIG_FILE = 4000; // 3908 exactly
+
   #else
     static const int MAX_COLOR_MAP_ENTRIES     = 30;
     static const int MAX_DEVICE_MAP_ENTRIES    = 35;
+    static const int MAX_SIZE_MAIN_CONFIG_FILE = 400;
+    static const int JSON_BUFFER_MAIN_CONFIG_FILE = 500; 
+    
+    static const int MAX_SIZE_COLOR_MAPPING_CONFIG_FILE = 1500;     // 1401 exactly
+    static const int JSON_BUFFER_COLOR_MAPPING_CONFIG_FILE = 3800;  // 3628 exactly
+
+    static const int MAX_SIZE_DEVICE_MAPPING_CONFIG_FILE = 1900;    // 1801 exactly
+    static const int JSON_BUFFER_DEVICE_MAPPING_CONFIG_FILE = 4000; // 3908 exactly        
   #endif
 
   PreAllocatedLinkedList<ColorMapping> m_cfgColorMapping;
@@ -278,15 +318,17 @@ private:
   PreAllocatedLinkedList<DeviceMapping> m_cfgDeviceMapping;
   bool m_cfgDeviceMappingDirty;
   
-  char m_cfgVersion[MAX_VERSION_LEN + 1];
   char m_cfgHost[MAX_HOST_LEN + 1];
-  char m_cfgWifiSSID[MAX_WIFI_SSID_LEN + 1];
-  char m_cfgWifiPSK[MAX_WIFI_PSK_LEN + 1];
+  char m_cfgGuiUser[MAX_GUI_USER_LEN + 1];
+  char m_cfgGuiPass[MAX_GUI_PASS_LEN + 1];
   char m_cfgMqttServer[MAX_MQTT_SERVER_LEN + 1];
+  char m_cfgMqttServerAuthUser[MAX_MQTT_SERVER_USER_LEN + 1];
+  char m_cfgMqttServerAuthPass[MAX_MQTT_SERVER_PASS_LEN + 1]; 
   char m_cfgMqttStatusTopic[MAX_MQTT_STATUS_TOPIC_LEN + 1];
   char m_cfgMqttTestTopic[MAX_MQTT_TEST_TOPIC_LEN + 1];
   char m_cfgMqttWillTopic[MAX_MQTT_WILL_TOPIC_LEN + 1];
   
+  uint16_t m_cfgMqttServerPort;
   int m_cfgNumberOfLeds;
   int m_cfgLedDataPin;
   uint8_t m_cfgLedBrightness;
@@ -295,4 +337,3 @@ private:
   HSDConfigFile m_colorMappingConfigFile;
   HSDConfigFile m_deviceMappingConfigFile;
 };
-

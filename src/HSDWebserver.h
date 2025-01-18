@@ -26,6 +26,8 @@ public:
 
   void begin();
   void handleClient(unsigned long deviceUptime);
+  void startWebServer();
+  void stopWebServer();
 
 private:
 
@@ -34,7 +36,7 @@ private:
   void deliverColorMappingPage(AsyncWebServerRequest *request);
   void deliverDeviceMappingPage(AsyncWebServerRequest *request);
   void deliverNotFoundPage(AsyncWebServerRequest *request);
-
+  
   void checkReboot(AsyncWebServerRequest *request);
 
   bool updateMainConfig(AsyncWebServerRequest *request);
@@ -51,7 +53,7 @@ private:
   bool addDeviceMappingEntry(AsyncWebServerRequest *request);
   bool deleteDeviceMappingEntry(AsyncWebServerRequest *request);
   
-  bool updateDeviceMappingConfig(AsyncWebServerRequest *request);
+  //bool updateDeviceMappingConfig(AsyncWebServerRequest *request);
 
   AsyncWebServer m_server;
   

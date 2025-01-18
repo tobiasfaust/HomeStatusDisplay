@@ -2,9 +2,7 @@ name: Build&Test
 on:
   push:
     branches:
-      - master
-      - prelive
-      - development
+      - test
     paths:
       - '**.cpp'
       - '**.h'
@@ -22,7 +20,6 @@ jobs:
       matrix:
         variant:
           - firmware_ESP32
-          - firmware_ESP32-S
           - firmware_ESP32-S2
           - firmware_ESP32-S3
           - firmware_ESP32-C3
