@@ -1,0 +1,14 @@
+{
+    "name": "HomeStatusDisplay (v0.7-stable)",
+    "chipFamily": "ESP8266",
+    "stage": "stable",
+    "build": 29,
+    "variant": "standard",
+    "version": "v0.7",
+    "parts": [
+        {
+            "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-29-stable/firmware_ESP8266/firmware.ESP8266.v0.7-29.standard.stable.bin",
+            "offset": 0
+        }
+    ]
+}
