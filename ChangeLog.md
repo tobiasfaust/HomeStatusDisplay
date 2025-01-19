@@ -1,3 +1,6 @@
+Release 0.7.1:
+  - increase buffer sizes for ESP32
+
 Release 0.7:
   - change to PlatformIO
   - fix some bugs

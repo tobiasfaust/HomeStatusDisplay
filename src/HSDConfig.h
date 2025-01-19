@@ -290,14 +290,14 @@ private:
   #ifdef ESP32
     static const int MAX_COLOR_MAP_ENTRIES     = 50;
     static const int MAX_DEVICE_MAP_ENTRIES    = 100;
-    static const int MAX_SIZE_MAIN_CONFIG_FILE = 580;
-    static const int JSON_BUFFER_MAIN_CONFIG_FILE = 600;
+    static const int MAX_SIZE_MAIN_CONFIG_FILE = 1000;
+    static const int JSON_BUFFER_MAIN_CONFIG_FILE = 1000;
     
-    static const int MAX_SIZE_COLOR_MAPPING_CONFIG_FILE = 1500;     // 1401 exactly
-    static const int JSON_BUFFER_COLOR_MAPPING_CONFIG_FILE = 3800;  // 3628 exactly
+    static const int MAX_SIZE_COLOR_MAPPING_CONFIG_FILE = 3000;     // 1401 exactly
+    static const int JSON_BUFFER_COLOR_MAPPING_CONFIG_FILE = 7400;  // 3628 exactly
 
-    static const int MAX_SIZE_DEVICE_MAPPING_CONFIG_FILE = 1900;    // 1801 exactly
-    static const int JSON_BUFFER_DEVICE_MAPPING_CONFIG_FILE = 4000; // 3908 exactly
+    static const int MAX_SIZE_DEVICE_MAPPING_CONFIG_FILE = 6000;    // 1801 exactly
+    static const int JSON_BUFFER_DEVICE_MAPPING_CONFIG_FILE = 12000; // 3908 exactly
 
   #else
     static const int MAX_COLOR_MAP_ENTRIES     = 30;
