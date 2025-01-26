@@ -1,326 +1,5 @@
 [
     {
-        "manifest": "firmware/v0.7.1-31-development/manifestAll-standard.json",
-        "files": "firmware/v0.7.1-31-development/filesAll.json",
-        "version": "v0.7.1",
-        "stage": "development",
-        "variant": "standard",
-        "build": 31,
-        "chipFamilies": [
-            "ESP32-S3",
-            "ESP32-C3",
-            "ESP8266",
-            "ESP32-S2",
-            "ESP32"
-        ],
-        "builds": [
-            {
-                "chipFamily": "ESP32-S2",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S2/bootloader.ESP32-S2.v0.7.1-31.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S2/partitions.ESP32-S2.v0.7.1-31.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S2/firmware.ESP32-S2.v0.7.1-31.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32/bootloader.ESP32.v0.7.1-31.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32/partitions.ESP32.v0.7.1-31.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32/firmware.ESP32.v0.7.1-31.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP8266",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP8266/firmware.ESP8266.v0.7.1-31.standard.development.bin",
-                        "offset": 0,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32-C3",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-C3/bootloader.ESP32-C3.v0.7.1-31.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-C3/partitions.ESP32-C3.v0.7.1-31.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-C3/firmware.ESP32-C3.v0.7.1-31.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32-S3",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S3/bootloader.ESP32-S3.v0.7.1-31.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S3/partitions.ESP32-S3.v0.7.1-31.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S3/firmware.ESP32-S3.v0.7.1-31.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "manifest": "firmware/v0.7-26-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-26-development/filesAll.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
-        "build": 26,
-        "chipFamilies": [
-            "ESP32-S3",
-            "ESP32-C3",
-            "ESP8266",
-            "ESP32-S2",
-            "ESP32"
-        ],
-        "builds": [
-            {
-                "chipFamily": "ESP32-S2",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S2/bootloader.ESP32-S2.v0.7-26.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S2/partitions.ESP32-S2.v0.7-26.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S2/firmware.ESP32-S2.v0.7-26.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32-S3",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S3/bootloader.ESP32-S3.v0.7-26.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S3/partitions.ESP32-S3.v0.7-26.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S3/firmware.ESP32-S3.v0.7-26.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32-C3",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-C3/bootloader.ESP32-C3.v0.7-26.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-C3/partitions.ESP32-C3.v0.7-26.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-C3/firmware.ESP32-C3.v0.7-26.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP8266",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP8266/firmware.ESP8266.v0.7-26.standard.development.bin",
-                        "offset": 0,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32/bootloader.ESP32.v0.7-26.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32/partitions.ESP32.v0.7-26.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32/firmware.ESP32.v0.7-26.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "manifest": "firmware/v0.7-27-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-27-development/filesAll.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
-        "build": 27,
-        "chipFamilies": [
-            "ESP32-S3",
-            "ESP32-C3",
-            "ESP8266",
-            "ESP32-S2",
-            "ESP32"
-        ],
-        "builds": [
-            {
-                "chipFamily": "ESP32-S2",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S2/bootloader.ESP32-S2.v0.7-27.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S2/partitions.ESP32-S2.v0.7-27.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S2/firmware.ESP32-S2.v0.7-27.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32/bootloader.ESP32.v0.7-27.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32/partitions.ESP32.v0.7-27.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32/firmware.ESP32.v0.7-27.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP8266",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP8266/firmware.ESP8266.v0.7-27.standard.development.bin",
-                        "offset": 0,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32-C3",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-C3/bootloader.ESP32-C3.v0.7-27.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-C3/partitions.ESP32-C3.v0.7-27.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-C3/firmware.ESP32-C3.v0.7-27.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32-S3",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S3/bootloader.ESP32-S3.v0.7-27.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S3/partitions.ESP32-S3.v0.7-27.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S3/firmware.ESP32-S3.v0.7-27.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            }
-        ]
-    },
-    {
         "manifest": "firmware/v0.7.1-30-development/manifestAll-standard.json",
         "files": "firmware/v0.7.1-30-development/filesAll.json",
         "version": "v0.7.1",
@@ -328,9 +7,9 @@
         "variant": "standard",
         "build": 30,
         "chipFamilies": [
+            "ESP8266",
             "ESP32-S3",
             "ESP32-C3",
-            "ESP8266",
             "ESP32-S2",
             "ESP32"
         ],
@@ -428,6 +107,434 @@
         ]
     },
     {
+        "manifest": "firmware/v0.7-27-development/manifestAll-standard.json",
+        "files": "firmware/v0.7-27-development/filesAll.json",
+        "version": "v0.7",
+        "stage": "development",
+        "variant": "standard",
+        "build": 27,
+        "chipFamilies": [
+            "ESP8266",
+            "ESP32-S3",
+            "ESP32-C3",
+            "ESP32-S2",
+            "ESP32"
+        ],
+        "builds": [
+            {
+                "chipFamily": "ESP32-S2",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S2/bootloader.ESP32-S2.v0.7-27.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S2/partitions.ESP32-S2.v0.7-27.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S2/firmware.ESP32-S2.v0.7-27.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32/bootloader.ESP32.v0.7-27.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32/partitions.ESP32.v0.7-27.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32/firmware.ESP32.v0.7-27.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP8266",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP8266/firmware.ESP8266.v0.7-27.standard.development.bin",
+                        "offset": 0,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32-C3",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-C3/bootloader.ESP32-C3.v0.7-27.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-C3/partitions.ESP32-C3.v0.7-27.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-C3/firmware.ESP32-C3.v0.7-27.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32-S3",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S3/bootloader.ESP32-S3.v0.7-27.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S3/partitions.ESP32-S3.v0.7-27.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-27-development/firmware_ESP32-S3/firmware.ESP32-S3.v0.7-27.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "manifest": "firmware/v0.7-26-development/manifestAll-standard.json",
+        "files": "firmware/v0.7-26-development/filesAll.json",
+        "version": "v0.7",
+        "stage": "development",
+        "variant": "standard",
+        "build": 26,
+        "chipFamilies": [
+            "ESP32-S3",
+            "ESP8266",
+            "ESP32-C3",
+            "ESP32-S2",
+            "ESP32"
+        ],
+        "builds": [
+            {
+                "chipFamily": "ESP32-S2",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S2/bootloader.ESP32-S2.v0.7-26.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S2/partitions.ESP32-S2.v0.7-26.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S2/firmware.ESP32-S2.v0.7-26.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32-S3",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S3/bootloader.ESP32-S3.v0.7-26.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S3/partitions.ESP32-S3.v0.7-26.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-S3/firmware.ESP32-S3.v0.7-26.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32-C3",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-C3/bootloader.ESP32-C3.v0.7-26.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-C3/partitions.ESP32-C3.v0.7-26.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32-C3/firmware.ESP32-C3.v0.7-26.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP8266",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP8266/firmware.ESP8266.v0.7-26.standard.development.bin",
+                        "offset": 0,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32/bootloader.ESP32.v0.7-26.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32/partitions.ESP32.v0.7-26.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-26-development/firmware_ESP32/firmware.ESP32.v0.7-26.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "manifest": "firmware/v0.7.1-32-development/manifestAll-standard.json",
+        "files": "firmware/v0.7.1-32-development/filesAll.json",
+        "version": "v0.7.1",
+        "stage": "development",
+        "variant": "standard",
+        "build": 32,
+        "chipFamilies": [
+            "ESP32-S3",
+            "ESP8266",
+            "ESP32-C3",
+            "ESP32-S2",
+            "ESP32"
+        ],
+        "builds": [
+            {
+                "chipFamily": "ESP32-S3",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-S3/bootloader.ESP32-S3.v0.7.1-32.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-S3/partitions.ESP32-S3.v0.7.1-32.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-S3/firmware.ESP32-S3.v0.7.1-32.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32-S2",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-S2/bootloader.ESP32-S2.v0.7.1-32.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-S2/partitions.ESP32-S2.v0.7.1-32.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-S2/firmware.ESP32-S2.v0.7.1-32.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP8266",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP8266/firmware.ESP8266.v0.7.1-32.standard.development.bin",
+                        "offset": 0,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32/bootloader.ESP32.v0.7.1-32.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32/partitions.ESP32.v0.7.1-32.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32/firmware.ESP32.v0.7.1-32.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32-C3",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-C3/bootloader.ESP32-C3.v0.7.1-32.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-C3/partitions.ESP32-C3.v0.7.1-32.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-32-development/firmware_ESP32-C3/firmware.ESP32-C3.v0.7.1-32.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "manifest": "firmware/v0.7.1-31-development/manifestAll-standard.json",
+        "files": "firmware/v0.7.1-31-development/filesAll.json",
+        "version": "v0.7.1",
+        "stage": "development",
+        "variant": "standard",
+        "build": 31,
+        "chipFamilies": [
+            "ESP8266",
+            "ESP32-S3",
+            "ESP32-C3",
+            "ESP32-S2",
+            "ESP32"
+        ],
+        "builds": [
+            {
+                "chipFamily": "ESP32-S2",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S2/bootloader.ESP32-S2.v0.7.1-31.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S2/partitions.ESP32-S2.v0.7.1-31.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S2/firmware.ESP32-S2.v0.7.1-31.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32/bootloader.ESP32.v0.7.1-31.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32/partitions.ESP32.v0.7.1-31.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32/firmware.ESP32.v0.7.1-31.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP8266",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP8266/firmware.ESP8266.v0.7.1-31.standard.development.bin",
+                        "offset": 0,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32-C3",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-C3/bootloader.ESP32-C3.v0.7.1-31.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-C3/partitions.ESP32-C3.v0.7.1-31.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-C3/firmware.ESP32-C3.v0.7.1-31.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            },
+            {
+                "chipFamily": "ESP32-S3",
+                "parts": [
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S3/bootloader.ESP32-S3.v0.7.1-31.standard.development.bin",
+                        "offset": 4096,
+                        "filetype": "bootloader"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S3/partitions.ESP32-S3.v0.7.1-31.standard.development.bin",
+                        "offset": 32768,
+                        "filetype": "partitions"
+                    },
+                    {
+                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7.1-31-development/firmware_ESP32-S3/firmware.ESP32-S3.v0.7.1-31.standard.development.bin",
+                        "offset": 65536,
+                        "filetype": "firmware"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "manifest": "firmware/v0.7-28-development/manifestAll-standard.json",
         "files": "firmware/v0.7-28-development/filesAll.json",
         "version": "v0.7",
@@ -435,9 +542,9 @@
         "variant": "standard",
         "build": 28,
         "chipFamilies": [
+            "ESP8266",
             "ESP32-S3",
             "ESP32-C3",
-            "ESP8266",
             "ESP32-S2",
             "ESP32"
         ],
@@ -542,9 +649,9 @@
         "variant": "standard",
         "build": 29,
         "chipFamilies": [
+            "ESP8266",
             "ESP32-S3",
             "ESP32-C3",
-            "ESP8266",
             "ESP32-S2",
             "ESP32"
         ],
@@ -634,113 +741,6 @@
                     },
                     {
                         "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-29-stable/firmware_ESP32-S3/firmware.ESP32-S3.v0.7-29.standard.stable.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "manifest": "firmware/v0.7-23-development/manifestAll-standard.json",
-        "files": "firmware/v0.7-23-development/filesAll.json",
-        "version": "v0.7",
-        "stage": "development",
-        "variant": "standard",
-        "build": 23,
-        "chipFamilies": [
-            "ESP32-S3",
-            "ESP32-C3",
-            "ESP8266",
-            "ESP32-S2",
-            "ESP32"
-        ],
-        "builds": [
-            {
-                "chipFamily": "ESP32-S2",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-S2/bootloader.ESP32-S2.v0.7-23.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-S2/partitions.ESP32-S2.v0.7-23.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-S2/firmware.ESP32-S2.v0.7-23.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32-S3",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-S3/bootloader.ESP32-S3.v0.7-23.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-S3/partitions.ESP32-S3.v0.7-23.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-S3/firmware.ESP32-S3.v0.7-23.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32-C3",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-C3/bootloader.ESP32-C3.v0.7-23.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-C3/partitions.ESP32-C3.v0.7-23.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32-C3/firmware.ESP32-C3.v0.7-23.standard.development.bin",
-                        "offset": 65536,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP8266",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP8266/firmware.ESP8266.v0.7-23.standard.development.bin",
-                        "offset": 0,
-                        "filetype": "firmware"
-                    }
-                ]
-            },
-            {
-                "chipFamily": "ESP32",
-                "parts": [
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32/bootloader.ESP32.v0.7-23.standard.development.bin",
-                        "offset": 4096,
-                        "filetype": "bootloader"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32/partitions.ESP32.v0.7-23.standard.development.bin",
-                        "offset": 32768,
-                        "filetype": "partitions"
-                    },
-                    {
-                        "path": "https://tobiasfaust.github.io/HomeStatusDisplay/firmware/v0.7-23-development/firmware_ESP32/firmware.ESP32.v0.7-23.standard.development.bin",
                         "offset": 65536,
                         "filetype": "firmware"
                     }
