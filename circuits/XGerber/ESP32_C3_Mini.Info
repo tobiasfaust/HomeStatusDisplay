@@ -1,0 +1,32 @@
+CAM-Ausgabe für Projekt / CAM Output for Project ESP32_C3_Mini.T3001
+Ausgabe am / Output Date 09. Apr 2026, 10:55h
+Projekt erzeugt mit / Project created with TARGET 33.7.0.10 discover
+Ausgabe erzeugt mit / Output created with TARGET 3001! V33.7.0.10
+Created with TARGET 3001! NC edition: Commercial use is illegal!
+Lieferanschrift / Delivery address:
+  
+  
+  
+  D- 
+  Tel: 
+  FAX: 
+  eMail: 
+Größe der Platine / Size of PCB: 43,7325 mm x 19,7625 mm
+Dicke der Platine / Thickness of PCB: 1,6 mm
+KupferDicke / Copper thickness: 35 µm
+
+Beschreibung der erzeugten Dateien / Description of generated files:
+
+ESP32_C3_Mini.Top = 16 = Kupfer oben / Copper top L1   ( *.Top )
+ESP32_C3_Mini.Bot = 2 = Kupfer unten / Copper bottom L2   ( *.Bot )
+ESP32_C3_Mini.Tool = Bohrerliste / Drill tool list
+ESP32_C3_Mini.Drill = Durchkontaktierte Bohrungen / Plated through drills
+ESP32_C3_Mini.Outline = 23 = Platinen-Umriss / PCB outline   ( *.Outline )
+ESP32_C3_Mini.StopTop = 18 = Lötstoppmaske oben / Solder stop top   ( *.StopTop )
+ESP32_C3_Mini.StopBot = 4 = Lötstoppmaske unten / Solder stop bottom   ( *.StopBot )
+ESP32_C3_Mini.PosiTop = 21 = Bestückungsdruck oben / Silk screen top   ( *.PosiTop )
+ESP32_C3_Mini.PosiBot = 7 = Bestückungsdruck unten / Silk screen bottom   ( *.PosiBot )
+ESP32_C3_Mini.PasteBot = 5 = Lötpaste unten / Paste bottom   ( *.PasteBot )
+ESP32_C3_Mini_BOM.xlsx = BOM / Bill Of Material (JLCPCB)
+ESP32_C3_Mini_CPL.xlsx = CPL / Component Placement List (JLCPCB)
+
