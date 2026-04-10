@@ -23,12 +23,13 @@ void HSDWebserver::begin()
   m_server.on("/cfgdevicemapping", std::bind(&HSDWebserver::deliverDeviceMappingPage, this, std::placeholders::_1));
   m_server.onNotFound(std::bind(&HSDWebserver::deliverNotFoundPage, this, std::placeholders::_1));
 
-  ElegantOTA.begin(&m_server);    // Start ElegantOTA
-  ElegantOTA.setGitEnv(String(GIT_OWNER), String(GIT_REPO), String(GIT_BRANCH));
+  ElegantOTA.setTargetPartition("spiffs");  // Set default partition for OTA updates
+  ElegantOTA.setGitEnv(String(GIT_OWNER), String(GIT_REPO), String(GIT_BRANCH), String(GITHUB_RUN).toInt());
   ElegantOTA.setFWVersion(String(m_config.getVersion()) + " / Build: " + GITHUB_RUN);
-  ElegantOTA.setBackupRestoreFS("/");
+  ElegantOTA.setFWVariant(String(GIT_VARIANT));
   ElegantOTA.setAutoReboot(true);
-  
+  ElegantOTA.begin(&m_server);    // Start ElegantOTA
+
   //ElegantOTA callbacks
   //ElegantOTA.onStart(onOTAStart);
   //ElegantOTA.onProgress(onOTAProgress);
